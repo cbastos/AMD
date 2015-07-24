@@ -1,0 +1,1 @@
+﻿var Library1 = { someMethod: function () { }};
