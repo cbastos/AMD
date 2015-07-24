@@ -36,6 +36,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="chromedriver.exe" />
     <Content Include="dist\AMD.js" />
     <Content Include="dist\AMD.min.js" />
     <Content Include="src\DependenciesFactory.js" />
