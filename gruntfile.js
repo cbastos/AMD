@@ -69,8 +69,10 @@
 
     grunt.initConfig(config);
 
-    grunt.registerTask('Tests', ['jasmine', 'jasmine_nodejs']);
+    grunt.registerTask('Launch-Browser-Integration-Tests', ['express:dev', 'jasmine_nodejs']);
+    grunt.registerTask('Launch-Unit-Tests', ['jasmine']);
     grunt.registerTask('Build', ['concat', 'uglify']);
-    grunt.registerTask('Build-and-Tests', ['express:dev', 'Build', 'Tests']);
+
+    grunt.registerTask('Build-and-Tests', ['Build', 'Launch-Unit-Tests', 'Launch-Browser-Integration-Tests']);
 
 };
