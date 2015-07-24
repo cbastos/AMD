@@ -70,7 +70,7 @@
 
     grunt.initConfig(config);
 
-    grunt.registerTask('Tests', ['jasmine', 'jasmine_nodejs']);
+    grunt.registerTask('Tests', ['jasmine']);
     grunt.registerTask('Build', ['concat', 'uglify']);
     grunt.registerTask('Build-and-Tests', ['express:dev', 'Build', 'Tests']);
 
