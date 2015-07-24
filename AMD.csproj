@@ -70,6 +70,7 @@
     <Content Include="vendor\sinon\sinon.js" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".travis.yml" />
     <None Include="dist\AMD.min.js.map" />
     <None Include="package.json" />
     <None Include="RunTestsOnBuild.target" />
