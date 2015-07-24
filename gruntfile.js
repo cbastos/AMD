@@ -7,7 +7,6 @@
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jasmine-nodejs');
     grunt.loadNpmTasks('grunt-express-server');
-    grunt.loadNpmTasks('grunt-parallel');
 
     var config = {};
 
@@ -70,7 +69,7 @@
 
     grunt.initConfig(config);
 
-    grunt.registerTask('Tests', ['jasmine_nodejs']);
+    grunt.registerTask('Tests', ['jasmine', 'jasmine_nodejs']);
     grunt.registerTask('Build', ['concat', 'uglify']);
     grunt.registerTask('Build-and-Tests', ['express:dev', 'Build', 'Tests']);
 
