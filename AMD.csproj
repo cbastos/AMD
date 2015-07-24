@@ -72,8 +72,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".travis.yml" />
+    <None Include="bower.json" />
     <None Include="dist\AMD.min.js.map" />
     <None Include="package.json" />
+    <None Include="README.md" />
     <None Include="RunTestsOnBuild.target" />
   </ItemGroup>
   <ItemGroup />

@@ -1,0 +1,25 @@
+{
+  "name": "AMD",
+  "version": "0.0.1",
+  "homepage": "https://github.com/cbastos/AMD",
+  "description": "An AMD framework for modular architectures",
+  "main": "AMD.min.js",
+  "moduleType": [
+    "amd",
+    "node"
+  ],
+  "keywords": [
+    "AMD"
+  ],
+  "authors": [
+    "Carlos Bastos Pérez-Cuadrado"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
