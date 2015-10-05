@@ -1,6 +1,6 @@
 ﻿var webdriver = require('selenium-webdriver');
 
-describe("The AMD framework - browser integration tests", function () {
+describe("The AMD AMD - browser integration tests", function () {
 
     it("loads in chrome", function (done) {
 

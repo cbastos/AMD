@@ -39,16 +39,17 @@
     <Content Include="chromedriver.exe" />
     <Content Include="dist\AMD.js" />
     <Content Include="dist\AMD.min.js" />
-    <Content Include="src\DependenciesFactory.js" />
+    <Content Include="src\classes\DependenciesFactory.js" />
+    <Content Include="src\classes\ModuleManager.js" />
+    <Content Include="src\classes\ModuleRequestTracker.js" />
+    <Content Include="src\classes\Promise.js" />
+    <Content Include="src\classes\ScriptManager.js" />
     <Content Include="src\AMD.js" />
-    <Content Include="src\ModuleManager.js" />
-    <Content Include="src\Promise.js" />
-    <Content Include="src\ScriptManager.js" />
     <Content Include="tests\AMD.Spec.js" />
     <Content Include="tests\AMD.SpecRunner.html" />
     <Content Include="tests\browser-integration\AMD.Integration.Spec.js" />
     <Content Include="tests\browser-integration\server.js" />
-    <Content Include="tests\DependenciesFactory.Spec.js" />
+    <Content Include="tests\unit-tests\DependenciesFactory.Spec.js" />
     <Content Include="tests\fixtures\AnExternalLibrary.js" />
     <Content Include="tests\fixtures\Library1.js" />
     <Content Include="tests\fixtures\Library1.Plugin.js" />
@@ -56,8 +57,9 @@
     <Content Include="tests\fixtures\sample.jquery.plugin.js" />
     <Content Include="tests\fixtures\SampleModule.js" />
     <Content Include="tests\fixtures\WhiteImplementation.js" />
-    <Content Include="tests\Promise.Spec.js" />
-    <Content Include="src\StartingModulesTracker.js" />
+    <Content Include="tests\unit-tests\ScriptManager.Spec.js" />
+    <Content Include="tests\unit-tests\ModuleRequestTracker.Spec.js" />
+    <Content Include="tests\unit-tests\Promise.Spec.js" />
     <Content Include="gruntfile.js" />
     <Content Include="vendor\blanket\blanket.min.js" />
     <Content Include="vendor\blanket\jasmine-blanket.js" />
@@ -78,7 +80,9 @@
     <None Include="README.md" />
     <None Include="RunTestsOnBuild.target" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="doc\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

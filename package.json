@@ -1,16 +1,58 @@
-﻿{
-    "name": "AMD",
-    "version": "0.1.0",
-    "devDependencies": {
-        "grunt": "0.4.5",
-        "grunt-contrib-jshint": "0.10.0",
-        "grunt-contrib-concat": "0.5.1",
-        "grunt-contrib-uglify": "0.5.0",
-        "grunt-contrib-jasmine": "0.9.0",
-        "grunt-jasmine-nodejs": "1.4.2",
-        "grunt-webdriver-jasmine-runner": "0.3.9",
-        "grunt-express-server": "0.5.1",
-        "express": "4.13.1",
-        "selenium-webdriver": "2.46.1"
-    }
+{
+  "name": "amd",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "0.4.5",
+    "load-grunt-tasks": "3.2.0",
+    "grunt-contrib-jshint": "0.10.0",
+    "grunt-contrib-concat": "0.5.1",
+    "grunt-contrib-clean": "0.6.0",
+    "grunt-contrib-uglify": "0.5.0",
+    "grunt-contrib-jasmine": "0.9.0",
+    "grunt-jasmine-nodejs": "1.4.2",
+    "grunt-webdriver-jasmine-runner": "0.3.9",
+    "grunt-jsdoc": "0.6.7",
+    "grunt-express-server": "0.5.1",
+	"grunt-typescript": "0.7.0",
+    "express": "4.13.1",
+    "selenium-webdriver": "2.46.1"
+  },
+  "description": "amd AMD",
+  "main": "gruntfile.js",
+  "directories": {
+    "doc": "doc",
+    "test": "tests"
+  },
+  "dependencies": {
+    "express": "^4.13.1",
+	"grunt": "^0.4.5",
+	"grunt-typescript": "0.7.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-jasmine": "^0.9.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-uglify": "^0.5.0",
+    "grunt-express-server": "^0.5.1",
+    "grunt-jasmine-nodejs": "^1.4.2",
+    "grunt-jsdoc": "^0.6.7",
+    "grunt-webdriver-jasmine-runner": "^0.3.9",
+    "load-grunt-tasks": "^3.2.0",
+    "selenium-webdriver": "^2.46.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cbastos/AMD.git"
+  },
+  "keywords": [
+    "amd"
+  ],
+  "author": "Carlos Bastos Pérez-Cuadrado",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cbastos/AMD/issues"
+  },
+  "homepage": "https://github.com/cbastos/AMD#readme"
 }

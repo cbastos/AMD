@@ -2,7 +2,7 @@
   "name": "AMD",
   "version": "0.0.1",
   "homepage": "https://github.com/cbastos/AMD",
-  "description": "An AMD framework for modular architectures",
+  "description": "An AMD AMD for modular architectures",
   "main": "AMD.min.js",
   "moduleType": [
     "amd",

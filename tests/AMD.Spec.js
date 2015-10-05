@@ -3,11 +3,11 @@
 
     var JQUERY_PATH = "../vendor/jquery/jquery-1.8.2.js";
 
-    describe("when inspecting framework objects facades", function () {
+    describe("when inspecting AMD objects facades", function () {
 
-        describe("when inspecting framework global variable", function () {
+        describe("when inspecting AMD global variable", function () {
 
-            it("shows framework utilities", function () {
+            it("shows AMD utilities", function () {
                 expect(typeof (AMD.set) === "function").toBeTruthy();
                 expect(typeof (AMD.config) === "function").toBeTruthy();
                 expect(typeof (AMD.get) === "function").toBeTruthy();
@@ -66,7 +66,7 @@
                     id: "IrrelevantId",
                     // --> Missing "from".
                 });
-            }).toThrow('The reference has wrong properties. Try to set an "module" or "library" (string) and a "from". (Wrong reference: {"id":"IrrelevantId"}).');
+            }).toThrow('The reference has wrong properties. Try to set an script \"id\" (string) and a "from". (Wrong reference: {"id":"IrrelevantId"}).');
         });
 
         it("fails if the module needs a library that isn't registered previously", function () {
@@ -101,7 +101,7 @@
             expect(function () {
                 var wrongTypeIdentifier = {};
                 AMD.set({ id: wrongTypeIdentifier, from: "Irrelevant" });
-            }).toThrow('The reference has wrong properties. Try to set an "module" or "library" (string) and a "from". (Wrong reference: {"id":{},"from":"Irrelevant"}).');
+            }).toThrow('The reference has wrong properties. Try to set an script \"id\" (string) and a "from". (Wrong reference: {"id":{},"from":"Irrelevant"}).');
         });
 
     });
@@ -214,7 +214,7 @@
             expect(function () {
                 var wrongTypeIdentifier = {};
                 AMD.set({ library: wrongTypeIdentifier, from: "Irrelevant" });
-            }).toThrow('The reference has wrong properties. Try to set an "module" or "library" (string) and a "from". (Wrong reference: {"library":{},"from":"Irrelevant"}).');
+            }).toThrow('The reference has wrong properties. Try to set an script \"id\" (string) and a "from". (Wrong reference: {"library":{},"from":"Irrelevant"}).');
         });
 
         it("may require a library with plugins available through the dependencies", function (done) {

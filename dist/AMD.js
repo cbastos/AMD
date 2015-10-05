@@ -1,284 +1,367 @@
 var AMD = AMD || {};
-(function (framework) {
-    "use strict";
-    framework.classes = framework.classes || {};
-    framework.classes.DependenciesFactory = DependenciesFactory;
+(function (AMD) {
+	"use strict";
+	AMD.classes = AMD.classes || {};
+	AMD.classes.DependenciesFactory = DependenciesFactory;
 
-    function DependenciesFactory() {
+	/** 
+	 * @constructor DependenciesFactory
+	 * @class The factory for creating dependencies objects.
+	 */
+	function DependenciesFactory() {
 
-    }
+	}
+	
+	/** 
+	 * Fills a the dependencies template object with his dependencies.
+     * @memberOf DependenciesFactory
+     * @param {Object} dependenciesTemplate The template is an object with dependency identifiers (as properties of the template object) to be replaced for the dependencies.
+     * @param {Object} defaultDependencies Default dependencies for all elements.
+     * @param {Object} instantiate Instantiator callback.
+    */
+	DependenciesFactory.prototype.createFrom = function (dependenciesTemplate, defaultDependencies, instantiate) {
+		var dependencies = dependenciesTemplate || {};
+		fill(dependencies, instantiate);
+		for (var member in defaultDependencies) {
+			dependencies[member] = defaultDependencies[member];
+		}
+		return dependencies;
+	};
 
-    DependenciesFactory.prototype.createFrom = function (dependenciesTemplate, defaultDependencies, instantiate) {
-        var dependencies = dependenciesTemplate || {};
-        fill(dependencies, instantiate);
-        for (var member in defaultDependencies) {
-            dependencies[member] = defaultDependencies[member];
-        }
-        return dependencies;
-    };
+	function fill(dependenciesTemplate, instantiate) {
+		for (var property in dependenciesTemplate) {
+			if (typeof (dependenciesTemplate[property]) === "string") {
+				dependenciesTemplate[property] = get(dependenciesTemplate[property], instantiate);
+			} else if (Array.isArray(dependenciesTemplate[property])) {
+				dependenciesTemplate[property] = get(dependenciesTemplate[property][0], instantiate);
+			} else {
+				fill(dependenciesTemplate[property], instantiate);
+			}
+		}
+	}
 
-    function fill(dependenciesTemplate, instantiate) {
-        for (var property in dependenciesTemplate) {
-            if (typeof (dependenciesTemplate[property]) === "string") {
-                dependenciesTemplate[property] = get(dependenciesTemplate[property], instantiate);
-            } else if (Array.isArray(dependenciesTemplate[property])) {
-                dependenciesTemplate[property] = get(dependenciesTemplate[property][0], instantiate);
-            } else {
-                fill(dependenciesTemplate[property], instantiate);
-            }
-        }
-    }
+	function get(globalVariablePath, instantiate) {
+		var nameSpacePathParts = globalVariablePath.split(".");
+		var nameSpacePath = {};
+		for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
+			if (i == 0) {
+				nameSpacePath = window[nameSpacePathParts[i]];
+			} else {
+				nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
+			}
+		}
 
-    function get(globalVariablePath, instantiate) {
-        var nameSpacePathParts = globalVariablePath.split(".");
-        var nameSpacePath = {};
-        for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-            if (i == 0) {
-                nameSpacePath = window[nameSpacePathParts[i]];
-            } else {
-                nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
-            }
-        }
-
-        if (nameSpacePath && nameSpacePath.from) {
-            nameSpacePath = instantiate(nameSpacePath);
-        }
-        return nameSpacePath;
-    }
+		if (nameSpacePath && nameSpacePath.from) {
+			nameSpacePath = instantiate(nameSpacePath);
+		}
+		return nameSpacePath;
+	}
 
 }(AMD));
-
 var AMD = AMD || {};
-(function (framework) {
-    "use strict";
-    framework.classes = framework.classes || {};
-    framework.classes.ModuleManager = ModuleManager;
+(function (AMD) {
+	"use strict";
+	AMD.classes = AMD.classes || {};
+	AMD.classes.ModuleManager = ModuleManager;
 
-    function ModuleManager(scriptManager) {
-        var self = this,
+	/** 
+	 * @constructor ModuleManager
+	 * @class The module manager.
+	 */
+	function ModuleManager(scriptManager) {
+		var self = this,
             defaultDependencies = {},
-            startingModulesTracker = new framework.classes.StartingModulesTracker();
+            startingModulesTracker = new AMD.classes.ModuleRequestTracker();
 
-        self.setDefaultDependencies = function (newDefaultDependencies) {
-            defaultDependencies = newDefaultDependencies;
-        };
+		/** 
+		 * Sets the default dependencies object.
+		 * @memberOf ModuleManager
+		 * @param {Object} newDefaultDependencies The object with the default dependencies.
+		*/
+		self.setDefaultDependencies = function (newDefaultDependencies) {
+			defaultDependencies = newDefaultDependencies;
+		};
 
-        self.register = function (moduleRegisterInfo) {
-            validate(moduleRegisterInfo);
-            if (!isLoaded(moduleRegisterInfo.id)) {
-                registerOnWindow(moduleRegisterInfo);
-            }
-        };
+		/** 
+		 * Register a new módule
+		 * @memberOf ModuleManager
+		 * @param {Object} moduleRegisterInfo The module register information with identifier, definition, etc.
+		*/
+		self.register = function (moduleRegisterInfo) {
+			validate(moduleRegisterInfo);
+			if (!isLoaded(moduleRegisterInfo.id)) {
+				registerOnWindow(moduleRegisterInfo);
+			}
+		};
 
-        function validate(moduleRegisterInfo) {
-            var isNotValid = (moduleRegisterInfo === undefined
+		function validate(moduleRegisterInfo) {
+			var isNotValid = (moduleRegisterInfo === undefined
                                 || typeof (moduleRegisterInfo.id) !== "string"
                                 || typeof (moduleRegisterInfo.from) !== "function");
-            if (isNotValid) {
-                throw "You're trying to register an element without 'id' identifier or a 'from' origin. You must specify an identifier \"id\" (string) and a from \"from\" (a function to get the module or a path (string) where is placed the element), and you can optionally establish \"dependencies\" of the element.";
-            }
-        }
+			if (isNotValid) {
+				throw "You're trying to register an element without 'id' identifier or a 'from' origin. You must specify an identifier \"id\" (string) and a from \"from\" (a function to get the module or a path (string) where is placed the element), and you can optionally establish \"dependencies\" of the element.";
+			}
+		}
 
-        function registerOnWindow(module) {
-            var nameSpacePathParts = module.id.split("."),
+		function registerOnWindow(module) {
+			var nameSpacePathParts = module.id.split("."),
                 nameSpacePath = window;
 
-            for (var i = 0, l = nameSpacePathParts.length - 1; i < l; i++) {
-                if (!nameSpacePath[nameSpacePathParts[i]]) {
-                    nameSpacePath = nameSpacePath[nameSpacePathParts[i]] = {};
-                } else {
-                    nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
-                }
-            }
-            nameSpacePath[nameSpacePathParts[nameSpacePathParts.length - 1]] = module;
-        }
-        self.get = function (module) {
-            var promise = new framework.classes.Promise(),
-                idModule = module.id;
+			for (var i = 0, l = nameSpacePathParts.length - 1; i < l; i++) {
+				if (!nameSpacePath[nameSpacePathParts[i]]) {
+					nameSpacePath = nameSpacePath[nameSpacePathParts[i]] = {};
+				} else {
+					nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
+				}
+			}
+			nameSpacePath[nameSpacePathParts[nameSpacePathParts.length - 1]] = module;
+		}
 
-            startingModulesTracker.addModuleDataStart(idModule, { startCallBack: promise.done });
+		/** 
+		 * Retrieves a module.
+		 * @memberOf ModuleManager
+		 * @param {Object} module The module.
+		*/
+		self.get = function (module) {
+			var promise = new AMD.classes.Promise(),
+                moduleIdentifier = module.id;
 
-            self.getModule(idModule).then(function (module) {
-                download(module.dependencies).then(function () {
-                    instanceStartingModulesOf(idModule);
-                });
-            });
+			//TODO: el segundo parámetro siempre es una promesa, quitar dataclump
+			startingModulesTracker.registerModuleRequest({ id: moduleIdentifier, moduleRequestPromise: promise });
 
-            return promise;
-        };
+			getModule(moduleIdentifier).then(function (module) {
+				download(module.dependencies).then(function () {
+					instanceStartingModulesOf(moduleIdentifier);
+				});
+			});
 
-        function download(dependencies) {
-            var promise = new framework.classes.Promise();
+			return promise;
+		};
 
-            var elementsToDownload = getElementsToDownload(dependencies);
-            if (elementsToDownload.length > 0) {
-                scriptManager.download(elementsToDownload).then(promise.done)
-            } else {
-                promise.done();
-            }
-            return promise;
-        }
+		function download(dependencies) {
+			var promise = new AMD.classes.Promise();
 
-        function getElementsToDownload(element) {
-            var elementsToDownload = [];
-            for (var p in element) {
-                var member = element[p];
-                if (typeof (member) === "string" && !isLoaded(member)) {
-                    elementsToDownload.push(member);
-                } else if (Array.isArray(member)) {
-                    var downloadInOrder = [];
-                    for (var i = 0, l = member.length; i < l; ++i) {
-                        if (!isLoaded(member[i])) {
-                            downloadInOrder.push(member[i]);
-                        }
-                    }
-                    elementsToDownload.push(downloadInOrder);
-                } else if (typeof (member) === "object") {
-                    elementsToDownload = elementsToDownload.concat(getElementsToDownload(member));
-                }
-            }
-            return elementsToDownload;
-        }
+			var elementsToDownload = getElementsToDownload(dependencies);
+			if (elementsToDownload.length > 0) {
+				scriptManager.download(elementsToDownload).then(promise.resolve)
+			} else {
+				promise.resolve();
+			}
+			return promise;
+		}
 
-        function isLoaded(globalVariablePath) {
-            var nameSpacePathParts = globalVariablePath.split(".");
-            var nameSpacePath = {};
-            for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-                if (i == 0) {
-                    nameSpacePath = window[nameSpacePathParts[i]];
-                } else {
-                    nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
-                }
-                if (typeof (nameSpacePath) === "undefined") {
-                    return false;
-                }
-            }
-            return true;
-        }
+		function getElementsToDownload(element) {
+			var elementsToDownload = [];
+			for (var p in element) {
+				var member = element[p];
+				if (typeof (member) === "string" && !isLoaded(member)) {
+					elementsToDownload.push(member);
+				} else if (Array.isArray(member)) {
+					var downloadInOrder = [];
+					for (var i = 0, l = member.length; i < l; ++i) {
+						if (!isLoaded(member[i])) {
+							downloadInOrder.push(member[i]);
+						}
+					}
+					elementsToDownload.push(downloadInOrder);
+				} else if (typeof (member) === "object") {
+					elementsToDownload = elementsToDownload.concat(getElementsToDownload(member));
+				}
+			}
+			return elementsToDownload;
+		}
 
-        self.getModule = function (idModule) {
-            var promise = new framework.classes.Promise();
+		function isLoaded(globalVariablePath) {
+			var nameSpacePathParts = globalVariablePath.split(".");
+			var nameSpacePath = {};
+			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
+				if (i == 0) {
+					nameSpacePath = window[nameSpacePathParts[i]];
+				} else {
+					nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
+				}
+				if (typeof (nameSpacePath) === "undefined") {
+					return false;
+				}
+			}
+			return true;
+		}
 
-            if (isLoaded(idModule)) {
-                promise.done(getVar(idModule));
-            } else if (startingModulesTracker.getNumerOfStartingModulesFor(idModule) <= 1) {
-                scriptManager.getScript({
-                    id: idModule,
-                    scriptPath: scriptManager.getPathFor(idModule)
-                }).then(function () {
-                    promise.done(getVar(idModule));
-                });
-            }
-            return promise;
-        };
+		function getModule(moduleIdentifier) {
+			var promise = new AMD.classes.Promise();
 
-        //TODO: quitar de aquí, está duplicada  en dependenciesfactory
-        function getVar(globalVariablePath) {
-            var nameSpacePathParts = globalVariablePath.split("."),
+			if (isLoaded(moduleIdentifier)) {
+				promise.resolve(getVar(moduleIdentifier));
+			} else if (startingModulesTracker.getNumberOfRequestsFor(moduleIdentifier) <= 1) {
+				scriptManager.getScript({
+					id: moduleIdentifier,
+					scriptPath: scriptManager.getPathFor(moduleIdentifier)
+				}).then(function () {
+					promise.resolve(getVar(moduleIdentifier));
+				});
+			}
+			return promise;
+		};
+
+		function getVar(globalVariablePath) {
+			var nameSpacePathParts = globalVariablePath.split("."),
                 target = {};
-            for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-                if (i == 0) {
-                    target = window[nameSpacePathParts[i]];
-                } else {
-                    target = target[nameSpacePathParts[i]];
-                }
-            }
-            return target;
-        }
+			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
+				if (i == 0) {
+					target = window[nameSpacePathParts[i]];
+				} else {
+					target = target[nameSpacePathParts[i]];
+				}
+			}
+			return target;
+		}
 
-        function instanceStartingModulesOf(idModule) {
-            var module = getVar(idModule);
-            while (startingModulesTracker.hasStartingModules(idModule)) {
-                var startingData = startingModulesTracker.getFirstDataStart(idModule);
-                startingModulesTracker.deleteFirstDataStart(idModule);
-                if (module && module.from) {
-                    instantiate(module, startingData, defaultDependencies);
-                } else {
-                    startingData.startCallBack(getVar(idModule));
-                }
-            }
-        }
+		function instanceStartingModulesOf(moduleIdentifier) {
+			var module = getVar(moduleIdentifier);
+			while (startingModulesTracker.hasRequestsRegisteredFor(moduleIdentifier)) {
+				var moduleRequestPromise = startingModulesTracker.getFirstModuleRequestFor(moduleIdentifier);
+				startingModulesTracker.deleteFirstModuleRequestFor(moduleIdentifier);
+				if (module && module.from) {
+					instantiate(module, moduleRequestPromise, defaultDependencies);
+				} else {
+					moduleRequestPromise.resolve(getVar(moduleIdentifier));
+				}
+			}
+		}
 
-        function instantiate(module, startingData, defaultDependencies) {
-            var hasStartingDataCallBak = startingData && typeof (startingData.startCallBack) === "function",
-                dependenciesFactory = new framework.classes.DependenciesFactory(),
+		function instantiate(module, moduleRequestPromise, defaultDependencies) {
+			var hasStartingDataCallBak = moduleRequestPromise && typeof (moduleRequestPromise.resolve) === "function",
+                dependenciesFactory = new AMD.classes.DependenciesFactory(),
                 dependencies = dependenciesFactory.createFrom(module.dependencies, defaultDependencies, instantiate),
                 instance = module.from(dependencies);
 
-            if (hasStartingDataCallBak) {
-                startingData.startCallBack(instance);
-            }
-            return instance;
-        };
-    }
+			if (hasStartingDataCallBak) {
+				moduleRequestPromise.resolve(instance);
+			}
+			return instance;
+		};
+	}
 
 }(AMD));
 
 var AMD = AMD || {};
-(function (framework) {
+(function (AMD) {
     "use strict";
-    framework.classes = framework.classes || {};
-    framework.classes.StartingModulesTracker = StartingModulesTracker;
+    AMD.classes = AMD.classes || {};
+    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
     
-    function StartingModulesTracker() {
+	/** 
+	 * @constructor ModuleRequestTracker
+	 * @class The module retrieving request tracker.
+	 */
+    function ModuleRequestTracker() {
         this.startingModules = {};
     }
 
-    StartingModulesTracker.prototype.addModuleDataStart = function (idModule, dataStart) {
-        this.startingModules[idModule] = this.startingModules[idModule] || [];
-        this.startingModules[idModule].push(dataStart);
+	/** 
+	 * Registers a request of a module in the tracker.
+	 * @memberOf ModuleRequestTracker
+	 * @param {{id:String,moduleRequestPromise:Promise}} moduleRequest The info of the request for a module.
+	*/
+    ModuleRequestTracker.prototype.registerModuleRequest = function (moduleRequest) {
+    	this.startingModules[moduleRequest.id] = this.startingModules[moduleRequest.id] || [];
+    	this.startingModules[moduleRequest.id].push(moduleRequest.moduleRequestPromise);
     };
 
-    StartingModulesTracker.prototype.getNumerOfStartingModulesFor = function (idModule) {
-        return this.startingModules[idModule] ? this.startingModules[idModule].length : 0;
+	/** 
+	 * Gets the number of requests for a module.
+	 * @memberOf ModuleRequestTracker
+	 * @param {String} moduleIdentifier The module identifier.
+	 * @returns {Number} Number of requests for a module.
+	*/
+    ModuleRequestTracker.prototype.getNumberOfRequestsFor = function (moduleIdentifier) {
+        return this.startingModules[moduleIdentifier] ? this.startingModules[moduleIdentifier].length : 0;
     };
 
-    StartingModulesTracker.prototype.hasStartingModules = function (idModule) {
-        return this.startingModules[idModule] && this.startingModules[idModule].length !== 0;
+	/** 
+	 * Gets if a module has requests to be retrieved.
+	 * @memberOf ModuleRequestTracker
+	 * @param {String} moduleIdentifier The module identifier.
+	 * @returns {Boolean} The module has requests to be retrieved.
+	*/
+    ModuleRequestTracker.prototype.hasRequestsRegisteredFor = function (moduleIdentifier) {
+        return this.startingModules[moduleIdentifier] && this.startingModules[moduleIdentifier].length !== 0;
     };
 
-    StartingModulesTracker.prototype.getFirstDataStart = function (idModule) {
-        return this.startingModules[idModule][0];
+	/** 
+	 * Gets the first request for retrieve a module.
+	 * @memberOf ModuleRequestTracker
+	 * @param {String} moduleIdentifier The module identifier.
+	 * @returns {{id: string, startPromise: Promise}} the first request to retrieve a module.
+	*/
+    ModuleRequestTracker.prototype.getFirstModuleRequestFor = function (moduleIdentifier) {
+        return this.startingModules[moduleIdentifier][0];
     };
 
-    StartingModulesTracker.prototype.deleteFirstDataStart = function (module) {
-        this.startingModules[module].splice(0, 1);
+	/** 
+	 * Deletes the first request of a module.
+	 * @memberOf ModuleRequestTracker
+	 * @param {String} moduleIdentifier The module identifier.
+	*/
+    ModuleRequestTracker.prototype.deleteFirstModuleRequestFor = function (moduleIdentifier) {
+    	this.startingModules[moduleIdentifier].splice(0, 1);
     };
 
 }(AMD));
 
 var AMD = AMD || {};
-(function (framework) {
-    "use strict";
-    framework.classes = framework.classes || {};
-    framework.classes.Promise = Promise;
+(function (AMD) {
+	"use strict";
+	AMD.classes = AMD.classes || {};
+	AMD.classes.Promise = Promise;
 
-    function Promise() {
-        var self = this;
-        var resolved = false, callback, args;
+	/** 
+	 * @constructor Promise
+	 * @class The promise.
+	 */
+	function Promise() {
+		var self = this,
+			resolved = false,
+			callback,
+			args;
 
-        self.then = function (clback) {
-            callback = clback;
-            if (resolved) {
-                callback.apply({}, args);
-            }
-        };
-        self.done = function () {
-            args = arguments;
-            resolved = true;
-            if (callback) {
-                callback.apply({}, args);
-            }
-        };
-    }
+		/** 
+		 * Sets the callback function that must be executed when the promise is resolved with a success result.
+		 * @memberOf Promise
+		 * @param {Object} thenCallback The callback that must be executed when the promise be resolved.
+		*/
+		self.then = function (thenCallback) {
+			callback = thenCallback;
+			if (resolved) {
+				callback.apply({}, args);
+			}
+		};
+
+		/** 
+		 * Resolves the promise with a success result.
+		 * @memberOf Promise
+		 * @param {...*} arguments The arguments for resolution.
+		*/
+		self.resolve = function () {
+			args = arguments;
+			resolved = true;
+			if (callback) {
+				callback.apply({}, args);
+			}
+		};
+	}
 }(AMD));
 
 var AMD = AMD || {};
-(function (framework) {
+(function (AMD) {
     "use strict";
-    framework.classes = framework.classes || {};
-    framework.classes.ScriptManager = ScriptManager;
+    AMD.classes = AMD.classes || {};
+    AMD.classes.ScriptManager = ScriptManager;
 
+	/** 
+	 * @constructor ScriptManager
+	 * @class The script manager is the responsible to retrieve the scripts, downloading it if they weren't downloaded yet.
+	 */
     function ScriptManager() {
         var self = this,
             scriptPaths = {},
@@ -286,8 +369,14 @@ var AMD = AMD || {};
                 return reference.from;
             };
 
+    	/** 
+		 * Downloads an array of scripts.
+		 * @memberOf ScriptManager
+		 * @param {String[]} identifiers Identifiers of scripts you want to download.
+		 * @returns {Promise} The promise of be downloaded.
+		*/
         self.download = function (identifiers) {
-            var promise = new framework.classes.Promise();
+            var promise = new AMD.classes.Promise();
 
             for (var i = 0, l = identifiers.length; i < l; ++i) {
                 var element = identifiers[i];
@@ -304,16 +393,38 @@ var AMD = AMD || {};
             function checkAreDownloaded(id) {
                 identifiers.splice(identifiers.indexOf(id), 1);
                 if (identifiers.length === 0) {
-                    promise.done();
+                	promise.resolve();
                 }
             }
 
             return promise;
         };
 
+        function downloadScriptsInOrder(id, scriptsNames) {
+        	var promise = new AMD.classes.Promise();
+        	if (scriptsNames.length == 0) {
+        		promise.resolve(id);
+        	} else {
+        		self.getScript({
+        			id: scriptsNames[0],
+        			scriptPath: self.getPathFor(scriptsNames[0]),
+        		}).then(function () {
+        			scriptsNames.shift();
+        			downloadScriptsInOrder(id, scriptsNames).then(promise.resolve);
+        		});
+        	}
+        	return promise;
+        }
+
+    	/** 
+		 * Registers a new script definition in the script manager.
+		 * @memberOf ScriptManager
+		 * @param {Object} pathReference The script path reference.
+		 * @throws {WrongScriptReference} The script reference hasn't an "id" or "from".
+		*/
         self.register = function (pathReference) {
-            if (!isValid(pathReference)) {
-                throw "The reference has wrong properties. Try to set an \"module\" or \"library\" (string) and a \"from\". (Wrong reference: " + JSON.stringify(pathReference) + ").";
+        	if (!isValid(pathReference)) {
+                throw "The reference has wrong properties. Try to set an script \"id\" (string) and a \"from\". (Wrong reference: " + JSON.stringify(pathReference) + ").";
             }
             scriptPaths[pathReference.id] = pathReference;
         };
@@ -322,8 +433,16 @@ var AMD = AMD || {};
             return pathReference &&
                    typeof (pathReference.id) === "string" &&
                    typeof (pathReference.from) !== "undefined";
-        };
+        }
 
+    	/** 
+		 * Gets a script path through his identifier.
+		 * @memberOf ScriptManager
+		 * @param {String} id The script identifier.
+		 * @returns {String} The path of the script.
+		 * @throws {WrongUrlResolved} The resolved url is not a string.
+		 * @throws {ScriptNotRegistered} The script has not been registered.
+		*/
         self.getPathFor = function (id) {
             var from = scriptPaths[id];
             if (typeof (from) !== "undefined") {
@@ -336,6 +455,17 @@ var AMD = AMD || {};
             throw "The \"" + id + "\" from hasn't been added.";
         };
 
+    	/**
+		 * This callback type is called `pathResolver`.
+		 * @callback pathResolver
+		 * @param {Object} pathReference The script path reference.
+		 */
+
+        /**
+         * Configures the path resolver that process the script path reference.
+         * @memberOf ScriptManager
+	     * @param {pathResolver} newPathResolver - The new path resolver that will process the script path reference.
+		 */
         self.setPathResolver = function (newPathResolver) {
             if (typeof (newPathResolver) != "function") {
                 throw "The configured pathResolver is not a function";
@@ -343,32 +473,22 @@ var AMD = AMD || {};
             pathResolver = newPathResolver;
         };
 
-        function downloadScriptsInOrder(id, scriptsNames) {
-            var promise = new framework.classes.Promise();
-            if (scriptsNames.length == 0) {
-                promise.done(id);
-            } else {
-                self.getScript({
-                    id: scriptsNames[0],
-                    scriptPath: self.getPathFor(scriptsNames[0]),
-                }).then(function () {
-                    scriptsNames.shift();
-                    downloadScriptsInOrder(id, scriptsNames).then(promise.done);
-                });
-            }
-            return promise;
-        };
-
+    	/**
+		 * Retrieves a script.
+		 * @memberOf ScriptManager
+		 * @param {Object} downloadScriptConfig The script config with the 'id' and 'scriptPath' of the script.
+		 * @returns {Promise} The promise of be retrieved the script.
+		 */
         self.getScript = function (downloadScriptConfig) {
-            var promise = new framework.classes.Promise();
+            var promise = new AMD.classes.Promise();
             var existingScript = getScriptsByAttributeValue("data-identifier", downloadScriptConfig.id)[0];
             if (existingScript === undefined) {
-                downloadScript(downloadScriptConfig).then(function () { promise.done(downloadScriptConfig.id) });
+            	downloadScript(downloadScriptConfig).then(function () { promise.resolve(downloadScriptConfig.id) });
             } else {
                 if (existingScript.getAttribute("data-loaded") === "true") {
-                    promise.done(downloadScriptConfig.id);
+                	promise.resolve(downloadScriptConfig.id);
                 } else {
-                    existingScript.addEventListener('load', function () { promise.done(downloadScriptConfig.id) });
+                	existingScript.addEventListener('load', function () { promise.resolve(downloadScriptConfig.id) });
                 }
             }
             return promise;
@@ -385,15 +505,15 @@ var AMD = AMD || {};
                 }
             }
             return match;
-        };
+        }
 
         function downloadScript(downloadScriptConfig) {
-            var promise = new framework.classes.Promise();
+            var promise = new AMD.classes.Promise();
             var script = document.createElement('script');
             script.setAttribute("data-identifier", downloadScriptConfig.id);
             script.addEventListener('load', function () {
                 script.setAttribute("data-loaded", true);
-                promise.done();
+                promise.resolve();
             }, false);
             script.src = downloadScriptConfig.scriptPath;
 
@@ -405,21 +525,46 @@ var AMD = AMD || {};
 
 }(AMD));
 
+/** 
+ * The AMD (asynchronous module definition) AMD.
+ * @class AMD
+ * @global
+ */
 var AMD = AMD || {};
-(function (framework) {
+(function (AMD) {
     "use strict";
-    var scriptManager = new framework.classes.ScriptManager(),
-        moduleManager = new framework.classes.ModuleManager(scriptManager);
+    var scriptManager = new AMD.classes.ScriptManager(),
+		moduleManager = new AMD.classes.ModuleManager(scriptManager);
 
-    framework.set = function (element) {
+	/** 
+	 * Registers a new element (module or script) in the AMD System.
+	 * @memberOf AMD
+	 * @param {Object} element The element (module or script) you want to register in the AMD System.
+	*/
+    AMD.set = function (element) {
         if (typeof (element.from) === "function") {
             moduleManager.register(element);
         } else {
             scriptManager.register(element);
         }
     };
-    framework.get = moduleManager.get;
-    framework.config = function (configDetails) {
+
+	//TODO: This method should retrieve modules and scripts, not only modules.
+	/** 
+	 * Retrieves an element (module or script) previously registered in the AMD System.
+	 * @memberOf AMD
+	 * @param {Object} element Retrieves an element (module or script) with his dependencies.
+	*/
+    AMD.get = function () {
+    	return moduleManager.get.apply(this, arguments);
+    };
+
+	/** 
+	 * Change configuration of the AMD. You can configure a new path resolver or the default dependencies for all elements.
+	 * @memberOf AMD
+	 * @param {Object} configDetails The configuration details.
+	*/
+    AMD.config = function (configDetails) {
         if (typeof configDetails !== "undefined") {
             if (typeof configDetails.pathResolver !== "undefined") {
                 scriptManager.setPathResolver(configDetails.pathResolver);

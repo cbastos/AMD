@@ -1,78 +1,81 @@
 ﻿module.exports = function (grunt) {
 
-    grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-webdriver-jasmine-runner');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-jasmine-nodejs');
-    grunt.loadNpmTasks('grunt-express-server');
+	require("load-grunt-tasks")(grunt);
 
-    var config = {};
+	var config = {};
 
-    config.pkg = grunt.file.readJSON('package.json');
+	config.pkg = grunt.file.readJSON('package.json');
 
-    config.jasmine = {
-        pivotal: {
-            src: 'dist/AMD.js',
-            options: {
-                specs: 'tests/Promise.Spec.js',
-            }
-        }
-    };
+	config.jasmine = {
+		pivotal: {
+			src: 'dist/AMD.js',
+			options: {
+				specs: 'tests/unit-tests/*.Spec.js',
+			}
+		}
+	};
 
-    config.jasmine_nodejs = {
-        AMD: {
-            specs: [
+	config.jasmine_nodejs = {
+		AMD: {
+			specs: [
                 "tests/browser-integration/**",
-            ]
-        }
-    };
+			]
+		}
+	};
 
-    config.concat = {
-        dist: {
-            src: [
-                './src/DependenciesFactory.js',
-                './src/ModuleManager.js',
-                './src/StartingModulesTracker.js',
-                './src/Promise.js',
-                './src/ScriptManager.js',
+	config.concat = {
+		dist: {
+			src: [
+                './src/classes/DependenciesFactory.js',
+                './src/classes/ModuleManager.js',
+                './src/classes/ModuleRequestTracker.js',
+                './src/classes/Promise.js',
+                './src/classes/ScriptManager.js',
                 './src/AMD.js'
-            ],
-            dest: './dist/AMD.js',
-        },
-    };
+			],
+			dest: './dist/AMD.js',
+		},
+	};
 
-    config.uglify = {
-        options: {
-            sourceMap: true,
-            banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-        },
-        build: {
-            src: './dist/AMD.js',
-            dest: './dist/AMD.min.js'
-        }
-    };
+	config.uglify = {
+		options: {
+			sourceMap: true,
+			banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+		},
+		build: {
+			src: './dist/AMD.js',
+			dest: './dist/AMD.min.js'
+		}
+	};
 
-    config.jshint = {
-        all: ['Gruntfile.js', 'src/**/*.js', 'tests/**/*.js']
-    };
+	config.jshint = {
+		all: ['Gruntfile.js', 'src/**/*.js', 'tests/**/*.js']
+	};
 
-    config.express = {
-        dev: {
-            options: {
-                port: 4505,
-                script: 'tests/browser-integration/server.js'
-            }
-        }
-    };
+	config.express = {
+		dev: {
+			options: {
+				port: 4505,
+				script: 'tests/browser-integration/server.js'
+			}
+		}
+	};
 
-    grunt.initConfig(config);
+	config.jsdoc = {
+		dist: {
+			src: ['src/*.js'],
+			options: {
+				destination: 'doc'
+			}
+		}
+	};
 
-    grunt.registerTask('Launch-Browser-Integration-Tests', ['express:dev', 'jasmine_nodejs']);
-    grunt.registerTask('Launch-Unit-Tests', ['jasmine']);
-    grunt.registerTask('Build', ['concat', 'uglify']);
+	grunt.initConfig(config);
 
-    grunt.registerTask('Build-and-Tests', ['Build', 'Launch-Unit-Tests', 'Launch-Browser-Integration-Tests']);
+	grunt.registerTask('Build', ['concat', 'uglify']);
+	grunt.registerTask('Launch-Browser-Integration-Tests', ['Build', 'express:dev', 'jasmine_nodejs']);
+	grunt.registerTask('Launch-Unit-Tests', ['Build', 'jasmine']);
+	grunt.registerTask('Build-Documentation', ['jsdoc']);
+	grunt.registerTask('Build-Release', ['Build', 'jasmine', 'jsdoc', 'express:dev', 'jasmine_nodejs']);
 
 };
