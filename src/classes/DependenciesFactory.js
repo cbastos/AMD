@@ -1,7 +1,7 @@
-﻿var AMD = AMD || {};
+﻿var AMD = AMD || { classes: {} };
 (function (AMD) {
 	"use strict";
-	AMD.classes = AMD.classes || {};
+
 	AMD.classes.DependenciesFactory = DependenciesFactory;
 
 	/** 
@@ -11,7 +11,7 @@
 	function DependenciesFactory() {
 
 	}
-	
+
 	/** 
 	 * Fills a the dependencies template object with his dependencies.
      * @memberOf DependenciesFactory

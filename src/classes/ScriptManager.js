@@ -1,7 +1,7 @@
-﻿var AMD = AMD || {};
+﻿var AMD = AMD || { classes: {} };
 (function (AMD) {
     "use strict";
-    AMD.classes = AMD.classes || {};
+
     AMD.classes.ScriptManager = ScriptManager;
 
 	/** 
