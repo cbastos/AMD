@@ -3,8 +3,8 @@
 	"use strict";
 
 	/** 
-	 * @constructor ModuleManager
 	 * @class The module manager.
+	 * @constructor ModuleManager
 	 */
 	function ModuleManager(scriptManager) {
 		var self = this,

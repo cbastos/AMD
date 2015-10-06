@@ -3,8 +3,8 @@
 	"use strict";
 
 	/** 
-	 * @constructor DependenciesFactory
 	 * @class The factory for creating dependencies objects.
+	 * @constructor DependenciesFactory
 	 */
 	function DependenciesFactory() {
 

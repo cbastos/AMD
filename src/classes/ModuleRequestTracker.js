@@ -3,8 +3,8 @@
     "use strict";
     
 	/** 
-	 * @constructor ModuleRequestTracker
 	 * @class The module retrieving request tracker.
+	 * @constructor ModuleRequestTracker
 	 */
     function ModuleRequestTracker() {
         this.startingModules = {};

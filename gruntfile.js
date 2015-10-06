@@ -66,7 +66,7 @@
 
 	config.jsdoc = {
 		dist: {
-			src: ['src/*.js'],
+			src: ['src/*.js', 'src/classes/*.js'],
 			options: {
 				destination: 'doc'
 			}

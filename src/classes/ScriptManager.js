@@ -3,8 +3,8 @@
 	"use strict";
 
 	/** 
-	 * @constructor ScriptManager
 	 * @class The script manager is the responsible to retrieve scripts, downloading it if they weren't downloaded previously.
+	 * @constructor ScriptManager
 	 */
 	function ScriptManager() {
 		this._scriptPaths = {};
@@ -69,7 +69,7 @@
 	 * Registers a new script definition in the script manager.
 	 * @memberOf ScriptManager
 	 * @param {Object} pathReference The script path reference.
-	 * @throws {WrongScriptReference} The script reference hasn't an "id" or "from".
+	 * @throws The script reference hasn't an "id" or "from".
 	*/
 	ScriptManager.prototype.register = function (pathReference) {
 		validate(pathReference);
@@ -88,8 +88,8 @@
 	 * @memberOf ScriptManager
 	 * @param {String} id The script identifier.
 	 * @returns {String} The path of the script.
-	 * @throws {WrongUrlResolved} The resolved url is not a string.
-	 * @throws {ScriptNotRegistered} The script has not been registered.
+	 * @throws The resolved url is not a string.
+	 * @throws The script has not been registered.
 	*/
 	ScriptManager.prototype.getPathFor = function (id) {
 		var from = this._scriptPaths[id];
@@ -104,9 +104,10 @@
 	};
 
 	/**
-	 * This callback type is called `pathResolver`.
+	 * This callback will process the script path reference.
 	 * @callback pathResolver
 	 * @param {Object} pathReference The script path reference.
+	 * @returns {String} script url resolved.
 	 */
 
 	/**

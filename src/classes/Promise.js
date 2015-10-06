@@ -3,8 +3,8 @@
 	"use strict";
 
 	/** 
-	 * @constructor Promise
 	 * @class The promise.
+	 * @constructor Promise
 	 */
 	function Promise() {
 		var self = this,

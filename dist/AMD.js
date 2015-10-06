@@ -3,8 +3,8 @@ var AMD = AMD || { classes: {} };
 	"use strict";
 
 	/** 
-	 * @constructor DependenciesFactory
 	 * @class The factory for creating dependencies objects.
+	 * @constructor AMD.classes.DependenciesFactory
 	 */
 	function DependenciesFactory() {
 
@@ -64,8 +64,8 @@ var AMD = AMD || { classes: {} };
 	"use strict";
 
 	/** 
-	 * @constructor ModuleManager
 	 * @class The module manager.
+	 * @constructor ModuleManager
 	 */
 	function ModuleManager(scriptManager) {
 		var self = this,
@@ -247,8 +247,8 @@ var AMD = AMD || { classes: {} };
     "use strict";
     
 	/** 
-	 * @constructor ModuleRequestTracker
 	 * @class The module retrieving request tracker.
+	 * @constructor ModuleRequestTracker
 	 */
     function ModuleRequestTracker() {
         this.startingModules = {};
@@ -311,8 +311,8 @@ var AMD = AMD || { classes: {} };
 	"use strict";
 
 	/** 
-	 * @constructor Promise
 	 * @class The promise.
+	 * @constructor Promise
 	 */
 	function Promise() {
 		var self = this,
@@ -354,8 +354,8 @@ var AMD = AMD || { classes: {} };
 	"use strict";
 
 	/** 
-	 * @constructor ScriptManager
 	 * @class The script manager is the responsible to retrieve scripts, downloading it if they weren't downloaded previously.
+	 * @constructor ScriptManager
 	 */
 	function ScriptManager() {
 		this._scriptPaths = {};
@@ -420,7 +420,7 @@ var AMD = AMD || { classes: {} };
 	 * Registers a new script definition in the script manager.
 	 * @memberOf ScriptManager
 	 * @param {Object} pathReference The script path reference.
-	 * @throws {WrongScriptReference} The script reference hasn't an "id" or "from".
+	 * @throws The script reference hasn't an "id" or "from".
 	*/
 	ScriptManager.prototype.register = function (pathReference) {
 		validate(pathReference);
@@ -439,8 +439,8 @@ var AMD = AMD || { classes: {} };
 	 * @memberOf ScriptManager
 	 * @param {String} id The script identifier.
 	 * @returns {String} The path of the script.
-	 * @throws {WrongUrlResolved} The resolved url is not a string.
-	 * @throws {ScriptNotRegistered} The script has not been registered.
+	 * @throws The resolved url is not a string.
+	 * @throws The script has not been registered.
 	*/
 	ScriptManager.prototype.getPathFor = function (id) {
 		var from = this._scriptPaths[id];
@@ -455,9 +455,10 @@ var AMD = AMD || { classes: {} };
 	};
 
 	/**
-	 * This callback type is called `pathResolver`.
+	 * This callback will process the script path reference.
 	 * @callback pathResolver
 	 * @param {Object} pathReference The script path reference.
+	 * @returns {String} script url resolved.
 	 */
 
 	/**
@@ -525,9 +526,8 @@ var AMD = AMD || { classes: {} };
 }(AMD));
 /** 
  * The AMD (asynchronous module definition) manager.
- * @class AMD
- * @global
- */
+ * @namespace AMD
+*/
 var AMD = AMD || { classes: {} };
 (function (AMD) {
 	"use strict";
@@ -558,7 +558,7 @@ var AMD = AMD || { classes: {} };
 	};
 
 	/** 
-	 * Change configuration of the AMD. You can configure a new path resolver or the default dependencies for all elements.
+	 * Change configuration of the AMD manager. You can configure a new path resolver or the default dependencies for all elements.
 	 * @memberOf AMD
 	 * @param {Object} configDetails The configuration details.
 	*/

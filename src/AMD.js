@@ -1,8 +1,7 @@
 /** 
  * The AMD (asynchronous module definition) manager.
- * @class AMD
- * @global
- */
+ * @namespace AMD
+*/
 var AMD = AMD || { classes: {} };
 (function (AMD) {
 	"use strict";
@@ -33,7 +32,7 @@ var AMD = AMD || { classes: {} };
 	};
 
 	/** 
-	 * Change configuration of the AMD. You can configure a new path resolver or the default dependencies for all elements.
+	 * Change configuration of the AMD manager. You can configure a new path resolver or the default dependencies for all elements.
 	 * @memberOf AMD
 	 * @param {Object} configDetails The configuration details.
 	*/
