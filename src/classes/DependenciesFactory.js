@@ -15,7 +15,8 @@
      * @memberOf DependenciesFactory
      * @param {Object} dependenciesTemplate The template is an object with dependency identifiers (as properties of the template object) to be replaced for the dependencies.
      * @param {Object} defaultDependencies Default dependencies for all elements.
-     * @param {Object} instantiate Instantiator callback.
+     * @param {Function} instantiate Instantiator callback.
+     * @returns {Object} Object with dependencies as properties.
     */
 	DependenciesFactory.prototype.createFrom = function (dependenciesTemplate, defaultDependencies, instantiate) {
 		var dependencies = dependenciesTemplate || {};

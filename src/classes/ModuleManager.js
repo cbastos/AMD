@@ -58,6 +58,7 @@
 		 * Retrieves a module.
 		 * @memberOf ModuleManager
 		 * @param {Object} module The module.
+		 * @returns {Promise} Promise to be retrieved.
 		*/
 		self.get = function (module) {
 			var promise = new AMD.classes.Promise(),

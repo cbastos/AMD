@@ -44,7 +44,7 @@
 	 * Gets the first request for retrieve a module.
 	 * @memberOf ModuleRequestTracker
 	 * @param {String} moduleIdentifier The module identifier.
-	 * @returns {{id: string, startPromise: Promise}} the first request to retrieve a module.
+	 * @returns {Promise} The first request to retrieve a module.
 	*/
     ModuleRequestTracker.prototype.getFirstModuleRequestFor = function (moduleIdentifier) {
         return this.startingModules[moduleIdentifier][0];
