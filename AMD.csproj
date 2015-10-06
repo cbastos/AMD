@@ -57,6 +57,7 @@
     <Content Include="tests\fixtures\sample.jquery.plugin.js" />
     <Content Include="tests\fixtures\SampleModule.js" />
     <Content Include="tests\fixtures\WhiteImplementation.js" />
+    <Content Include="tests\unit-tests\ModuleManager.js" />
     <Content Include="tests\unit-tests\ScriptManager.Spec.js" />
     <Content Include="tests\unit-tests\ModuleRequestTracker.Spec.js" />
     <Content Include="tests\unit-tests\Promise.Spec.js" />

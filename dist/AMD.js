@@ -4,7 +4,7 @@ var AMD = AMD || { classes: {} };
 
 	/** 
 	 * @class The factory for creating dependencies objects.
-	 * @constructor AMD.classes.DependenciesFactory
+	 * @constructor DependenciesFactory
 	 */
 	function DependenciesFactory() {
 
@@ -70,6 +70,7 @@ var AMD = AMD || { classes: {} };
 	function ModuleManager(scriptManager) {
 		var self = this,
             defaultDependencies = {},
+			//-> TODO: These dependencies should be injected by constructor.
             startingModulesTracker = new AMD.classes.ModuleRequestTracker(),
 			dependenciesFactory = new AMD.classes.DependenciesFactory();
 
@@ -170,8 +171,8 @@ var AMD = AMD || { classes: {} };
 		}
 
 		function isLoaded(globalVariablePath) {
-			var nameSpacePathParts = globalVariablePath.split(".");
-			var nameSpacePath = {};
+			var nameSpacePathParts = globalVariablePath.split("."),
+				nameSpacePath = {};
 			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
 				if (i === 0) {
 					nameSpacePath = window[nameSpacePathParts[i]];
@@ -191,10 +192,7 @@ var AMD = AMD || { classes: {} };
 			if (isLoaded(moduleIdentifier)) {
 				promise.resolve(getVar(moduleIdentifier));
 			} else if (startingModulesTracker.getNumberOfRequestsFor(moduleIdentifier) <= 1) {
-				scriptManager.getScript({
-					id: moduleIdentifier,
-					scriptPath: scriptManager.getPathFor(moduleIdentifier)
-				}).then(function () {
+				scriptManager.download([moduleIdentifier]).then(function () {
 					promise.resolve(getVar(moduleIdentifier));
 				});
 			}
@@ -366,10 +364,30 @@ var AMD = AMD || { classes: {} };
 	};
 
 	/** 
+	 * Registers a new script definition in the script manager.
+	 * @memberOf ScriptManager
+	 * @param {Object} pathReference The script path reference.
+	 * @throws The script reference hasn't an "id" or "from".
+	*/
+	ScriptManager.prototype.register = function (pathReference) {
+		validate(pathReference);
+		this._scriptPaths[pathReference.id] = pathReference;
+	};
+
+	function validate(pathReference) {
+		var isValid = pathReference && typeof (pathReference.id) === "string" && typeof (pathReference.from) !== "undefined";
+		if (!isValid) {
+			throw "The reference has wrong properties. Try to set an script \"id\" (string) and a \"from\". (Wrong reference: " + JSON.stringify(pathReference) + ").";
+		}
+	}
+
+	/** 
 	 * Downloads an array of scripts.
 	 * @memberOf ScriptManager
 	 * @param {String[]} identifiers Identifiers of scripts you want to download.
 	 * @returns {Promise} The promise of be downloaded.
+	 * @throws The resolved url is not a string.
+	 * @throws The script has not been registered.
 	*/
 	ScriptManager.prototype.download = function (identifiers) {
 		var self = this,
@@ -392,7 +410,7 @@ var AMD = AMD || { classes: {} };
 	function getDownloadPromiseFor(element) {
 		var self = this;
 		if (typeof (element) === "string") {
-			return self.getScript({ id: element, scriptPath: self.getPathFor(element) });
+			return getScript.call(self, element);
 		} else {
 			return downloadScriptsInOrder.call(self, element[0], element);
 		}
@@ -405,10 +423,7 @@ var AMD = AMD || { classes: {} };
 			promise.resolve(id);
 		} else {
 			var firstScriptIdentifier = scriptsNames[0];
-			self.getScript({
-				id: firstScriptIdentifier,
-				scriptPath: self.getPathFor(firstScriptIdentifier),
-			}).then(function () {
+			getScript.call(self, firstScriptIdentifier).then(function () {
 				scriptsNames.shift();
 				downloadScriptsInOrder.call(self, id, scriptsNames).then(promise.resolve);
 			});
@@ -416,85 +431,23 @@ var AMD = AMD || { classes: {} };
 		return promise;
 	}
 
-	/** 
-	 * Registers a new script definition in the script manager.
-	 * @memberOf ScriptManager
-	 * @param {Object} pathReference The script path reference.
-	 * @throws The script reference hasn't an "id" or "from".
-	*/
-	ScriptManager.prototype.register = function (pathReference) {
-		validate(pathReference);
-		this._scriptPaths[pathReference.id] = pathReference;
-	};
-
-	function validate(pathReference) {
-		var isValid = pathReference && typeof (pathReference.id) === "string" && typeof (pathReference.from) !== "undefined";
-		if (!isValid) {
-			throw "The reference has wrong properties. Try to set an script \"id\" (string) and a \"from\". (Wrong reference: " + JSON.stringify(pathReference) + ").";
-		}
-	}
-
-	/** 
-	 * Gets a script path through his identifier.
-	 * @memberOf ScriptManager
-	 * @param {String} id The script identifier.
-	 * @returns {String} The path of the script.
-	 * @throws The resolved url is not a string.
-	 * @throws The script has not been registered.
-	*/
-	ScriptManager.prototype.getPathFor = function (id) {
-		var from = this._scriptPaths[id];
-		if (typeof from !== "undefined") {
-			var url = this._pathResolver(from);
-			if (typeof url === "string") {
-				return url;
-			}
-			throw "The resolved url for \"" + id + "\"is not a string.";
-		}
-		throw "The \"" + id + "\" from hasn't been added.";
-	};
-
-	/**
-	 * This callback will process the script path reference.
-	 * @callback pathResolver
-	 * @param {Object} pathReference The script path reference.
-	 * @returns {String} script url resolved.
-	 */
-
-	/**
-	 * Configures the path resolver that process the script path reference.
-	 * @memberOf ScriptManager
-	 * @param {pathResolver} pathResolver - The new path resolver that will process the script path reference.
-	 */
-	ScriptManager.prototype.setPathResolver = function (pathResolver) {
-		if (typeof (pathResolver) != "function") {
-			throw "The configured pathResolver is not a function";
-		}
-		this._pathResolver = pathResolver;
-	};
-
-	/**
-	 * Retrieves a script.
-	 * @memberOf ScriptManager
-	 * @param {Object} downloadScriptConfig The script config with the 'id' and 'scriptPath' of the script.
-	 * @returns {Promise} The promise of be retrieved the script.
-	 */
-	ScriptManager.prototype.getScript = function (downloadScriptConfig) {
-		var promise = new AMD.classes.Promise(),
-			existingScript = getFirstScriptInDom(downloadScriptConfig.id);
+	function getScript(scriptIdentifier) {
+		var self = this,
+			promise = new AMD.classes.Promise(),
+			existingScript = getFirstScriptInDom(scriptIdentifier);
 		if (existingScript === undefined) {
-			downloadScript(downloadScriptConfig).then(function () {
-				promise.resolve(downloadScriptConfig.id);
+			downloadScript({ id: scriptIdentifier, scriptPath: getPathFor.call(self, scriptIdentifier), }).then(function () {
+				promise.resolve(scriptIdentifier);
 			});
 		} else if (existingScript.getAttribute("data-loaded") === "true") {
-			promise.resolve(downloadScriptConfig.id);
+			promise.resolve(scriptIdentifier);
 		} else {
 			existingScript.addEventListener('load', function () {
-				promise.resolve(downloadScriptConfig.id);
+				promise.resolve(scriptIdentifier);
 			});
 		}
 		return promise;
-	};
+	}
 
 	function getFirstScriptInDom(scriptIdentifier) {
 		var scripts = document.getElementsByTagName("script");
@@ -520,6 +473,37 @@ var AMD = AMD || { classes: {} };
 		document.head.appendChild(script);
 		return promise;
 	}
+
+	function getPathFor(id) {
+		var from = this._scriptPaths[id];
+		if (typeof from !== "undefined") {
+			var url = this._pathResolver(from);
+			if (typeof url === "string") {
+				return url;
+			}
+			throw "The resolved url for \"" + id + "\"is not a string.";
+		}
+		throw "The \"" + id + "\" from hasn't been added.";
+	}
+
+	/**
+	 * This callback will process the script path reference.
+	 * @callback pathResolver
+	 * @param {Object} pathReference The script path reference.
+	 * @returns {String} script url resolved.
+	 */
+
+	/**
+	 * Configures the path resolver that process the script path reference.
+	 * @memberOf ScriptManager
+	 * @param {pathResolver} pathResolver - The new path resolver that will process the script path reference.
+	 */
+	ScriptManager.prototype.setPathResolver = function (pathResolver) {
+		if (typeof (pathResolver) != "function") {
+			throw "The configured pathResolver is not a function";
+		}
+		this._pathResolver = pathResolver;
+	};
 
 	AMD.classes.ScriptManager = ScriptManager;
 

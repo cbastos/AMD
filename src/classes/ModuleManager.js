@@ -9,6 +9,7 @@
 	function ModuleManager(scriptManager) {
 		var self = this,
             defaultDependencies = {},
+			//-> TODO: These dependencies should be injected by constructor.
             startingModulesTracker = new AMD.classes.ModuleRequestTracker(),
 			dependenciesFactory = new AMD.classes.DependenciesFactory();
 
@@ -109,8 +110,8 @@
 		}
 
 		function isLoaded(globalVariablePath) {
-			var nameSpacePathParts = globalVariablePath.split(".");
-			var nameSpacePath = {};
+			var nameSpacePathParts = globalVariablePath.split("."),
+				nameSpacePath = {};
 			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
 				if (i === 0) {
 					nameSpacePath = window[nameSpacePathParts[i]];
@@ -130,10 +131,7 @@
 			if (isLoaded(moduleIdentifier)) {
 				promise.resolve(getVar(moduleIdentifier));
 			} else if (startingModulesTracker.getNumberOfRequestsFor(moduleIdentifier) <= 1) {
-				scriptManager.getScript({
-					id: moduleIdentifier,
-					scriptPath: scriptManager.getPathFor(moduleIdentifier)
-				}).then(function () {
+				scriptManager.download([moduleIdentifier]).then(function () {
 					promise.resolve(getVar(moduleIdentifier));
 				});
 			}
