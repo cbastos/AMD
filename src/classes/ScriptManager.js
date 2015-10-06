@@ -2,8 +2,6 @@
 (function (AMD) {
     "use strict";
 
-    AMD.classes.ScriptManager = ScriptManager;
-
 	/** 
 	 * @constructor ScriptManager
 	 * @class The script manager is the responsible to retrieve the scripts, downloading it if they weren't downloaded yet.
@@ -48,7 +46,7 @@
 
         function downloadScriptsInOrder(id, scriptsNames) {
         	var promise = new AMD.classes.Promise();
-        	if (scriptsNames.length == 0) {
+        	if (scriptsNames.length === 0) {
         		promise.resolve(id);
         	} else {
         		self.getScript({
@@ -129,12 +127,12 @@
             var promise = new AMD.classes.Promise();
             var existingScript = getScriptsByAttributeValue("data-identifier", downloadScriptConfig.id)[0];
             if (existingScript === undefined) {
-            	downloadScript(downloadScriptConfig).then(function () { promise.resolve(downloadScriptConfig.id) });
+            	downloadScript(downloadScriptConfig).then(function () { promise.resolve(downloadScriptConfig.id); });
             } else {
                 if (existingScript.getAttribute("data-loaded") === "true") {
                 	promise.resolve(downloadScriptConfig.id);
                 } else {
-                	existingScript.addEventListener('load', function () { promise.resolve(downloadScriptConfig.id) });
+                	existingScript.addEventListener('load', function () { promise.resolve(downloadScriptConfig.id); });
                 }
             }
             return promise;
@@ -142,7 +140,7 @@
 
         function getScriptsByAttributeValue(attribute, value) {
             var scripts = document.getElementsByTagName("script");
-            var match = new Array();
+            var match = [];
             for (var i in scripts) {
                 if ((typeof scripts[i]) === "object") {
                     if (scripts[i].getAttribute(attribute) === value) {
@@ -168,5 +166,7 @@
         }
 
     }
+
+    AMD.classes.ScriptManager = ScriptManager;
 
 }(AMD));

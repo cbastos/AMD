@@ -2,8 +2,6 @@
 (function (AMD) {
 	"use strict";
 
-	AMD.classes.ModuleManager = ModuleManager;
-
 	/** 
 	 * @constructor ModuleManager
 	 * @class The module manager.
@@ -34,10 +32,8 @@
 			}
 		};
 
-		function validate(moduleRegisterInfo) {
-			var isNotValid = (moduleRegisterInfo === undefined
-                                || typeof (moduleRegisterInfo.id) !== "string"
-                                || typeof (moduleRegisterInfo.from) !== "function");
+		function validate(moduleInfo) {
+			var isNotValid = (moduleInfo === undefined || typeof (moduleInfo.id) !== "string" || typeof (moduleInfo.from) !== "function");
 			if (isNotValid) {
 				throw "You're trying to register an element without 'id' identifier or a 'from' origin. You must specify an identifier \"id\" (string) and a from \"from\" (a function to get the module or a path (string) where is placed the element), and you can optionally establish \"dependencies\" of the element.";
 			}
@@ -83,7 +79,7 @@
 
 			var elementsToDownload = getElementsToDownload(dependencies);
 			if (elementsToDownload.length > 0) {
-				scriptManager.download(elementsToDownload).then(promise.resolve)
+				scriptManager.download(elementsToDownload).then(promise.resolve);
 			} else {
 				promise.resolve();
 			}
@@ -115,7 +111,7 @@
 			var nameSpacePathParts = globalVariablePath.split(".");
 			var nameSpacePath = {};
 			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-				if (i == 0) {
+				if (i === 0) {
 					nameSpacePath = window[nameSpacePathParts[i]];
 				} else {
 					nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
@@ -141,13 +137,13 @@
 				});
 			}
 			return promise;
-		};
+		}
 
 		function getVar(globalVariablePath) {
 			var nameSpacePathParts = globalVariablePath.split("."),
                 target = {};
 			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-				if (i == 0) {
+				if (i === 0) {
 					target = window[nameSpacePathParts[i]];
 				} else {
 					target = target[nameSpacePathParts[i]];
@@ -179,7 +175,9 @@
 				moduleRequestPromise.resolve(instance);
 			}
 			return instance;
-		};
+		}
 	}
+
+	AMD.classes.ModuleManager = ModuleManager;
 
 }(AMD));

@@ -1,8 +1,6 @@
 ﻿var AMD = AMD || { classes: {} };
 (function (AMD) {
     "use strict";
-
-    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
     
 	/** 
 	 * @constructor ModuleRequestTracker
@@ -60,5 +58,7 @@
     ModuleRequestTracker.prototype.deleteFirstModuleRequestFor = function (moduleIdentifier) {
     	this.startingModules[moduleIdentifier].splice(0, 1);
     };
+
+    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
 
 }(AMD));

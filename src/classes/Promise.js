@@ -2,8 +2,6 @@
 (function (AMD) {
 	"use strict";
 
-	AMD.classes.Promise = Promise;
-
 	/** 
 	 * @constructor Promise
 	 * @class The promise.
@@ -39,4 +37,7 @@
 			}
 		};
 	}
+
+	AMD.classes.Promise = Promise;
+
 }(AMD));

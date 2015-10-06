@@ -20,8 +20,8 @@
             it("can set a default dependencies", function () {
                 var defaultDependencies = { handle: function () { } };
                 AMD.config({
-                    dependencies: defaultDependencies
-                })
+                	dependencies: defaultDependencies
+                });
                 AMD.set({
                     id: "ModuleForShowingSandBoxFacade",
                     from: function (dependencies) {
@@ -41,7 +41,7 @@
 
         it("may register a module only the first time", function () {
             var returnedValue = "doSomething_Module5_Executed";
-            AMD.set({ id: "Module5", from: function () { return returnedValue } });
+            AMD.set({ id: "Module5", from: function () { return returnedValue; } });
             AMD.set({ id: "Module5", from: function () { return "WRONG_VALUE"; } });
 
             AMD.get({ id: "Module5" }).then(function (returnedData) {

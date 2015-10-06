@@ -72,7 +72,7 @@
 
 	grunt.initConfig(config);
 
-	grunt.registerTask('Build', ['concat', 'uglify']);
+	grunt.registerTask('Build', ['jshint','concat', 'uglify']);
 	grunt.registerTask('Build-And-Launch-Browser-Integration-Tests', ['Build', 'express:dev', 'jasmine_nodejs']);
 	grunt.registerTask('Build-And-Launch-Unit-Tests', ['Build', 'jasmine']);
 	grunt.registerTask('Build-Documentation', ['jsdoc']);

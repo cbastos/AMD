@@ -2,8 +2,6 @@ var AMD = AMD || { classes: {} };
 (function (AMD) {
 	"use strict";
 
-	AMD.classes.DependenciesFactory = DependenciesFactory;
-
 	/** 
 	 * @constructor DependenciesFactory
 	 * @class The factory for creating dependencies objects.
@@ -44,7 +42,7 @@ var AMD = AMD || { classes: {} };
 		var nameSpacePathParts = globalVariablePath.split(".");
 		var nameSpacePath = {};
 		for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-			if (i == 0) {
+			if (i === 0) {
 				nameSpacePath = window[nameSpacePathParts[i]];
 			} else {
 				nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
@@ -57,12 +55,12 @@ var AMD = AMD || { classes: {} };
 		return nameSpacePath;
 	}
 
+	AMD.classes.DependenciesFactory = DependenciesFactory;
+
 }(AMD));
 var AMD = AMD || { classes: {} };
 (function (AMD) {
 	"use strict";
-
-	AMD.classes.ModuleManager = ModuleManager;
 
 	/** 
 	 * @constructor ModuleManager
@@ -94,10 +92,8 @@ var AMD = AMD || { classes: {} };
 			}
 		};
 
-		function validate(moduleRegisterInfo) {
-			var isNotValid = (moduleRegisterInfo === undefined
-                                || typeof (moduleRegisterInfo.id) !== "string"
-                                || typeof (moduleRegisterInfo.from) !== "function");
+		function validate(moduleInfo) {
+			var isNotValid = (moduleInfo === undefined || typeof (moduleInfo.id) !== "string" || typeof (moduleInfo.from) !== "function");
 			if (isNotValid) {
 				throw "You're trying to register an element without 'id' identifier or a 'from' origin. You must specify an identifier \"id\" (string) and a from \"from\" (a function to get the module or a path (string) where is placed the element), and you can optionally establish \"dependencies\" of the element.";
 			}
@@ -143,7 +139,7 @@ var AMD = AMD || { classes: {} };
 
 			var elementsToDownload = getElementsToDownload(dependencies);
 			if (elementsToDownload.length > 0) {
-				scriptManager.download(elementsToDownload).then(promise.resolve)
+				scriptManager.download(elementsToDownload).then(promise.resolve);
 			} else {
 				promise.resolve();
 			}
@@ -175,7 +171,7 @@ var AMD = AMD || { classes: {} };
 			var nameSpacePathParts = globalVariablePath.split(".");
 			var nameSpacePath = {};
 			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-				if (i == 0) {
+				if (i === 0) {
 					nameSpacePath = window[nameSpacePathParts[i]];
 				} else {
 					nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
@@ -201,13 +197,13 @@ var AMD = AMD || { classes: {} };
 				});
 			}
 			return promise;
-		};
+		}
 
 		function getVar(globalVariablePath) {
 			var nameSpacePathParts = globalVariablePath.split("."),
                 target = {};
 			for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-				if (i == 0) {
+				if (i === 0) {
 					target = window[nameSpacePathParts[i]];
 				} else {
 					target = target[nameSpacePathParts[i]];
@@ -239,16 +235,15 @@ var AMD = AMD || { classes: {} };
 				moduleRequestPromise.resolve(instance);
 			}
 			return instance;
-		};
+		}
 	}
 
-}(AMD));
+	AMD.classes.ModuleManager = ModuleManager;
 
+}(AMD));
 var AMD = AMD || { classes: {} };
 (function (AMD) {
     "use strict";
-
-    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
     
 	/** 
 	 * @constructor ModuleRequestTracker
@@ -307,13 +302,12 @@ var AMD = AMD || { classes: {} };
     	this.startingModules[moduleIdentifier].splice(0, 1);
     };
 
-}(AMD));
+    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
 
+}(AMD));
 var AMD = AMD || { classes: {} };
 (function (AMD) {
 	"use strict";
-
-	AMD.classes.Promise = Promise;
 
 	/** 
 	 * @constructor Promise
@@ -350,13 +344,13 @@ var AMD = AMD || { classes: {} };
 			}
 		};
 	}
-}(AMD));
 
+	AMD.classes.Promise = Promise;
+
+}(AMD));
 var AMD = AMD || { classes: {} };
 (function (AMD) {
     "use strict";
-
-    AMD.classes.ScriptManager = ScriptManager;
 
 	/** 
 	 * @constructor ScriptManager
@@ -402,7 +396,7 @@ var AMD = AMD || { classes: {} };
 
         function downloadScriptsInOrder(id, scriptsNames) {
         	var promise = new AMD.classes.Promise();
-        	if (scriptsNames.length == 0) {
+        	if (scriptsNames.length === 0) {
         		promise.resolve(id);
         	} else {
         		self.getScript({
@@ -483,12 +477,12 @@ var AMD = AMD || { classes: {} };
             var promise = new AMD.classes.Promise();
             var existingScript = getScriptsByAttributeValue("data-identifier", downloadScriptConfig.id)[0];
             if (existingScript === undefined) {
-            	downloadScript(downloadScriptConfig).then(function () { promise.resolve(downloadScriptConfig.id) });
+            	downloadScript(downloadScriptConfig).then(function () { promise.resolve(downloadScriptConfig.id); });
             } else {
                 if (existingScript.getAttribute("data-loaded") === "true") {
                 	promise.resolve(downloadScriptConfig.id);
                 } else {
-                	existingScript.addEventListener('load', function () { promise.resolve(downloadScriptConfig.id) });
+                	existingScript.addEventListener('load', function () { promise.resolve(downloadScriptConfig.id); });
                 }
             }
             return promise;
@@ -496,7 +490,7 @@ var AMD = AMD || { classes: {} };
 
         function getScriptsByAttributeValue(attribute, value) {
             var scripts = document.getElementsByTagName("script");
-            var match = new Array();
+            var match = [];
             for (var i in scripts) {
                 if ((typeof scripts[i]) === "object") {
                     if (scripts[i].getAttribute(attribute) === value) {
@@ -523,8 +517,9 @@ var AMD = AMD || { classes: {} };
 
     }
 
-}(AMD));
+    AMD.classes.ScriptManager = ScriptManager;
 
+}(AMD));
 /** 
  * The AMD (asynchronous module definition) manager.
  * @class AMD

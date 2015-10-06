@@ -2,8 +2,6 @@
 (function (AMD) {
 	"use strict";
 
-	AMD.classes.DependenciesFactory = DependenciesFactory;
-
 	/** 
 	 * @constructor DependenciesFactory
 	 * @class The factory for creating dependencies objects.
@@ -44,7 +42,7 @@
 		var nameSpacePathParts = globalVariablePath.split(".");
 		var nameSpacePath = {};
 		for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
-			if (i == 0) {
+			if (i === 0) {
 				nameSpacePath = window[nameSpacePathParts[i]];
 			} else {
 				nameSpacePath = nameSpacePath[nameSpacePathParts[i]];
@@ -56,5 +54,7 @@
 		}
 		return nameSpacePath;
 	}
+
+	AMD.classes.DependenciesFactory = DependenciesFactory;
 
 }(AMD));
