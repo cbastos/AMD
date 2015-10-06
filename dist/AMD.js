@@ -358,11 +358,12 @@ var AMD = AMD || { classes: {} };
 	 * @class The script manager is the responsible to retrieve the scripts, downloading it if they weren't downloaded yet.
 	 */
 	function ScriptManager() {
-		var self = this,
-            scriptPaths = {},
-            pathResolver = function (reference) {
-            	return reference.from;
-            };
+		var self = this;
+
+		self._scriptPaths = {};
+		self._pathResolver = function (reference) {
+			return reference.from;
+		};
 
 		/** 
 		 * Downloads an array of scripts.
@@ -419,7 +420,7 @@ var AMD = AMD || { classes: {} };
 		*/
 		self.register = function (pathReference) {
 			validate(pathReference);
-			scriptPaths[pathReference.id] = pathReference;
+			self._scriptPaths[pathReference.id] = pathReference;
 		};
 
 		function validate(pathReference) {
@@ -438,9 +439,9 @@ var AMD = AMD || { classes: {} };
 		 * @throws {ScriptNotRegistered} The script has not been registered.
 		*/
 		self.getPathFor = function (id) {
-			var from = scriptPaths[id];
+			var from = self._scriptPaths[id];
 			if (typeof (from) !== "undefined") {
-				var url = pathResolver(from);
+				var url = self._pathResolver(from);
 				if (typeof (url) === "string") {
 					return url;
 				}
@@ -458,13 +459,13 @@ var AMD = AMD || { classes: {} };
 		/**
          * Configures the path resolver that process the script path reference.
          * @memberOf ScriptManager
-	     * @param {pathResolver} newPathResolver - The new path resolver that will process the script path reference.
+	     * @param {pathResolver} pathResolver - The new path resolver that will process the script path reference.
 		 */
-		self.setPathResolver = function (newPathResolver) {
-			if (typeof (newPathResolver) != "function") {
+		self.setPathResolver = function (pathResolver) {
+			if (typeof (pathResolver) != "function") {
 				throw "The configured pathResolver is not a function";
 			}
-			pathResolver = newPathResolver;
+			self._pathResolver = pathResolver;
 		};
 
 		/**
