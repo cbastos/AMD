@@ -9,7 +9,8 @@
 	function ModuleManager(scriptManager) {
 		var self = this,
             defaultDependencies = {},
-            startingModulesTracker = new AMD.classes.ModuleRequestTracker();
+            startingModulesTracker = new AMD.classes.ModuleRequestTracker(),
+			dependenciesFactory = new AMD.classes.DependenciesFactory();
 
 		/** 
 		 * Sets the default dependencies object.
@@ -62,7 +63,6 @@
 			var promise = new AMD.classes.Promise(),
                 moduleIdentifier = module.id;
 
-			//TODO: el segundo parámetro siempre es una promesa, quitar dataclump
 			startingModulesTracker.registerModuleRequest({ id: moduleIdentifier, moduleRequestPromise: promise });
 
 			getModule(moduleIdentifier).then(function (module) {
@@ -167,7 +167,6 @@
 
 		function instantiate(module, moduleRequestPromise, defaultDependencies) {
 			var hasStartingDataCallBak = moduleRequestPromise && typeof (moduleRequestPromise.resolve) === "function",
-                dependenciesFactory = new AMD.classes.DependenciesFactory(),
                 dependencies = dependenciesFactory.createFrom(module.dependencies, defaultDependencies, instantiate),
                 instance = module.from(dependencies);
 

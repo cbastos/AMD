@@ -39,8 +39,8 @@ var AMD = AMD || { classes: {} };
 	}
 
 	function get(globalVariablePath, instantiate) {
-		var nameSpacePathParts = globalVariablePath.split(".");
-		var nameSpacePath = {};
+		var nameSpacePathParts = globalVariablePath.split("."),
+			nameSpacePath = {};
 		for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
 			if (i === 0) {
 				nameSpacePath = window[nameSpacePathParts[i]];
@@ -69,7 +69,8 @@ var AMD = AMD || { classes: {} };
 	function ModuleManager(scriptManager) {
 		var self = this,
             defaultDependencies = {},
-            startingModulesTracker = new AMD.classes.ModuleRequestTracker();
+            startingModulesTracker = new AMD.classes.ModuleRequestTracker(),
+			dependenciesFactory = new AMD.classes.DependenciesFactory();
 
 		/** 
 		 * Sets the default dependencies object.
@@ -227,7 +228,6 @@ var AMD = AMD || { classes: {} };
 
 		function instantiate(module, moduleRequestPromise, defaultDependencies) {
 			var hasStartingDataCallBak = moduleRequestPromise && typeof (moduleRequestPromise.resolve) === "function",
-                dependenciesFactory = new AMD.classes.DependenciesFactory(),
                 dependencies = dependenciesFactory.createFrom(module.dependencies, defaultDependencies, instantiate),
                 instance = module.from(dependencies);
 

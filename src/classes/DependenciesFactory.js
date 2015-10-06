@@ -39,8 +39,8 @@
 	}
 
 	function get(globalVariablePath, instantiate) {
-		var nameSpacePathParts = globalVariablePath.split(".");
-		var nameSpacePath = {};
+		var nameSpacePathParts = globalVariablePath.split("."),
+			nameSpacePath = {};
 		for (var i = 0, l = nameSpacePathParts.length; i < l; i++) {
 			if (i === 0) {
 				nameSpacePath = window[nameSpacePathParts[i]];
