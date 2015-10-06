@@ -355,7 +355,7 @@ var AMD = AMD || { classes: {} };
 
 	/** 
 	 * @constructor ScriptManager
-	 * @class The script manager is the responsible to retrieve the scripts, downloading it if they weren't downloaded yet.
+	 * @class The script manager is the responsible to retrieve scripts, downloading it if they weren't downloaded previously.
 	 */
 	function ScriptManager() {
 		this._scriptPaths = {};
@@ -376,18 +376,10 @@ var AMD = AMD || { classes: {} };
 			promise = new AMD.classes.Promise();
 
 		for (var i = 0, l = identifiers.length; i < l; ++i) {
-			var element = identifiers[i];
-			if (typeof (element) === "string") {
-				self.getScript({
-					id: element,
-					scriptPath: self.getPathFor(element),
-				}).then(checkAreDownloaded);
-			} else {
-				downloadScriptsInOrder.call(self, element[0], element).then(checkAreDownloaded);
-			}
+			getDownloadPromiseFor.call(this, identifiers[i]).then(checkAreDownladed);
 		}
 
-		function checkAreDownloaded(id) {
+		function checkAreDownladed(id) {
 			identifiers.splice(identifiers.indexOf(id), 1);
 			if (identifiers.length === 0) {
 				promise.resolve();
@@ -397,16 +389,25 @@ var AMD = AMD || { classes: {} };
 		return promise;
 	};
 
+	function getDownloadPromiseFor(element) {
+		var self = this;
+		if (typeof (element) === "string") {
+			return self.getScript({ id: element, scriptPath: self.getPathFor(element) });
+		} else {
+			return downloadScriptsInOrder.call(self, element[0], element);
+		}
+	}
+
 	function downloadScriptsInOrder(id, scriptsNames) {
-		/*jshint validthis:true */
 		var self = this,
 			promise = new AMD.classes.Promise();
 		if (scriptsNames.length === 0) {
 			promise.resolve(id);
 		} else {
+			var firstScriptIdentifier = scriptsNames[0];
 			self.getScript({
-				id: scriptsNames[0],
-				scriptPath: self.getPathFor(scriptsNames[0]),
+				id: firstScriptIdentifier,
+				scriptPath: self.getPathFor(firstScriptIdentifier),
 			}).then(function () {
 				scriptsNames.shift();
 				downloadScriptsInOrder.call(self, id, scriptsNames).then(promise.resolve);
@@ -481,11 +482,15 @@ var AMD = AMD || { classes: {} };
 		var promise = new AMD.classes.Promise(),
 			existingScript = getFirstScriptInDom(downloadScriptConfig.id);
 		if (existingScript === undefined) {
-			downloadScript(downloadScriptConfig).then(function () { promise.resolve(downloadScriptConfig.id); });
+			downloadScript(downloadScriptConfig).then(function () {
+				promise.resolve(downloadScriptConfig.id);
+			});
 		} else if (existingScript.getAttribute("data-loaded") === "true") {
 			promise.resolve(downloadScriptConfig.id);
 		} else {
-			existingScript.addEventListener('load', function () { promise.resolve(downloadScriptConfig.id); });
+			existingScript.addEventListener('load', function () {
+				promise.resolve(downloadScriptConfig.id);
+			});
 		}
 		return promise;
 	};
