@@ -10,14 +10,14 @@ A **module** is one type of entity that you can register and retrieve trough **J
 You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 
 ##JSL.set ( { id, from, [dependencies] } )
-#### Registering a script
+##### Registering a script
 ```javascript
 	JSL.set({ 
 		id: "SomeIdentifierThatExportsTheFile", 
 		from : "/path/to/file.js" 
 	});
 ```
-#### Registering a script with dependencies
+##### Registering a script with dependencies
 ```javascript
 	JSL.set({ 
 		id: "AnotherIdentifierThatExportsAnotherFile", 
@@ -25,7 +25,7 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 		from : "/path/to/another/file.js" 
 	});
 ```
-#### Registering a module
+##### Registering a module
 ```javascript
 	JSL.set({ 
 		id: "SomeModule",
@@ -36,7 +36,7 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 		}
 	});
 ```
-#### Registering a module with dependencies
+##### Registering a module with dependencies
 
 ```javascript
 	JSL.set({ 
@@ -53,13 +53,13 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 ```
 
 ##JSL.get ( { id } )
-#### Retrieving a script
+##### Retrieving a script
 ```javascript
 	JSL.get({ id: "SomeIdentifierThatExportsTheFile" }).then(function(exportedElement){
 		exportedElement.doSomething();
 	});
 ```
-#### Retrieving a module
+##### Retrieving a module
 
 * Retrieve the registered module:
 ```javascript
@@ -69,7 +69,7 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 ```
 
 ##JSL.config ( { [pathResolver] , [dependencies] } )
-#### Configuring the script path resolver
+##### Configuring the script path resolver
 ```javascript
 	JSL.config({ 
 		pathResolver: function(pathReference){
@@ -77,7 +77,7 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 		}
 	});
 ```
-#### Configuring the default dependencies for all modules
+##### Configuring the default dependencies for all modules
 ```javascript
 	JSL.config({ 
 		dependencies: { $ : $ }
