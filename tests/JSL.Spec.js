@@ -86,7 +86,7 @@
 	describe("when registering a module using his path", function () {
 
 		it("may be retrieved and its functions may be accessed", function (done) {
-			JSL.set({ id: "SampleModule", from: "./Fixtures/SampleModule.js" });
+			JSL.set({ id: "SampleModule", from: "./browser-integration/fixtures/SampleModule.js" });
 
 			JSL.get({ id: "SampleModule" }).then(function (SampleModule) {
 
@@ -130,11 +130,11 @@
 		});
 
 		it("gets the dependencies object filled downloading dependencies from files", function (done) {
-			var LIBRARY_PLUGIN_PATH = "./Fixtures/Library1.Plugin.js";
-			var LIBRARY_PATH = "./Fixtures/Library1.js";
+			var LIBRARY_PLUGIN_PATH = "./browser-integration/fixtures/Library1.Plugin.js";
+			var LIBRARY_PATH = "./browser-integration/fixtures/Library1.js";
 			JSL.set({ id: "Library1", from: LIBRARY_PATH });
 			JSL.set({ id: "Library1.Plugin", from: LIBRARY_PLUGIN_PATH });
-			var sampleModulePath = "./Fixtures/SampleModule.js";
+			var sampleModulePath = "./browser-integration/fixtures/SampleModule.js";
 			JSL.set({ id: "SampleModule", from: sampleModulePath });
 
 			JSL.set({
@@ -195,7 +195,7 @@
 		});
 
 		it("downloads the script if can't access to the library global symbol", function (done) {
-			var LIB_PATH = "./Fixtures/LibraryForNotAccesibleLibraryTest.js";
+			var LIB_PATH = "./browser-integration/fixtures/LibraryForNotAccesibleLibraryTest.js";
 			expect(document.querySelectorAll("script[src='" + LIB_PATH + "']").length).toBe(0);
 			JSL.set({ id: "lib", from: LIB_PATH });
 			JSL.set({
@@ -219,7 +219,7 @@
 
 		it("may require a library with plugins available through the dependencies", function (done) {
 			JSL.set({ id: "$", from: JQUERY_PATH });
-			JSL.set({ id: "$.fn.sampleJQueryPlugin", from: "./Fixtures/sample.jquery.plugin.js" });
+			JSL.set({ id: "$.fn.sampleJQueryPlugin", from: "./browser-integration/fixtures/sample.jquery.plugin.js" });
 			JSL.set({
 				id: "ModuleWithLibAndPlugin",
 				dependencies: { libraries: { $: ["$", "$.fn.sampleJQueryPlugin"] } },
@@ -242,8 +242,8 @@
 		});
 
 		it("doesn't download again the plugins if it has been loaded previously", function (done) {
-			var LIBRARY_PLUGIN_PATH = "./Fixtures/Library1.Plugin.js";
-			var LIBRARY_PATH = "./Fixtures/Library1.js";
+			var LIBRARY_PLUGIN_PATH = "./browser-integration/fixtures/Library1.Plugin.js";
+			var LIBRARY_PATH = "./browser-integration/fixtures/Library1.js";
 			var numberOfPluginsInDOM = document.querySelectorAll("script[src='" + LIBRARY_PLUGIN_PATH + "']").length;
 			JSL.set({ id: "Library1", from: LIBRARY_PATH });
 			JSL.set({ id: "Library1.Plugin", from: LIBRARY_PLUGIN_PATH });
@@ -277,7 +277,7 @@
 	describe("when getting modules", function () {
 
 		it("downloads the module scripts only once, regardless of how many times is the module started", function (done) {
-			var sampleModulePath = "./Fixtures/SampleModule.js",
+			var sampleModulePath = "./browser-integration/fixtures/SampleModule.js",
                 firstStartCallbackExecuted = false;
 			JSL.set({ id: "SampleModule", from: sampleModulePath });
 
@@ -321,7 +321,7 @@
 
 		it("makes the dependencies avaiable trough dependencies object", function (done) {
 			JSL.set({ id: "$", from: JQUERY_PATH });
-			JSL.set({ id: "$.fn.sampleJQueryPlugin", from: "./Fixtures/sample.jquery.plugin.js" });
+			JSL.set({ id: "$.fn.sampleJQueryPlugin", from: "./browser-integration/fixtures/sample.jquery.plugin.js" });
 			JSL.set({
 				id: "ModuleRequired",
 				from: function () {
@@ -482,7 +482,7 @@
 			JSL.set({
 				id: "ModuleWithMultipleImplementations",
 				from: {
-					whiteImplementation: "./Fixtures/WhiteImplementation.js"
+					whiteImplementation: "./browser-integration/fixtures/WhiteImplementation.js"
 				}
 			});
 

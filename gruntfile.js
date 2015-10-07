@@ -10,7 +10,7 @@
 		pivotal: {
 			src: 'dist/JSL.js',
 			options: {
-				specs: 'tests/unit-tests/*.Spec.js',
+				specs: 'tests/classes/*.Spec.js',
 			}
 		}
 	};
