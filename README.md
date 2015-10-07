@@ -1,5 +1,5 @@
 ![Image of Yaktocat](http://static.wixstatic.com/media/796749_ae4d25c41ef14e6b965ba188715c366e.png_srz_p_77_86_75_22_0.50_1.20_0.00_png_srz)
-# JSL [![Build Status](https://travis-ci.org/cbastos/JSL.svg?branch=master)](https://travis-ci.org/cbastos/JSL) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cbastos/JSL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+# JSL [![Build Status](https://travis-ci.org/cbastos/AMD.svg?branch=master)](https://travis-ci.org/cbastos/JSL) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/cbastos/JSL?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 **JSL** (**J**ava**S**cript **L**oader) is back-end (nodeJS complatible) and front-end (all browsers) script loader. It allows register and retrieve scripts and modules with their dependencies.
 ##What's a script?
 A **script** is a ".js" file that exports an object related with a named variable (the script identifier). 
