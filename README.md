@@ -10,6 +10,7 @@ A **module** is one type of entity that you can register and retrieve trough **J
 You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 
 ##JSL.set ( { id, from, [dependencies] } )
+The "set" method allows to register scripts and modules in JSL. A module can be registered directly (with a "from" function to retrieve his definition) or trough his path (with a "from" with the script path reference as object).
 ##### Registering a script
 ```javascript
 	JSL.set({ 
@@ -53,6 +54,7 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 ```
 
 ##JSL.get ( { id } )
+The "get" method allows to retrieve scripts and modules previously registered in JSL.
 ##### Retrieving a script
 ```javascript
 	JSL.get({ id: "SomeIdentifierThatExportsTheFile" }).then(function(exportedElement){
@@ -69,6 +71,7 @@ You can see full documentation (api and tutorials) on http://www.jsloader.com/.
 ```
 
 ##JSL.config ( { [pathResolver] , [dependencies] } )
+The "config" method allows to configurations (like configure a new path resolver or the default dependencies for all modules) over JSL.
 ##### Configuring the script path resolver
 ```javascript
 	JSL.config({ 
