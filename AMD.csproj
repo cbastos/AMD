@@ -37,8 +37,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="chromedriver.exe" />
-    <Content Include="dist\AMD.js" />
-    <Content Include="dist\AMD.min.js" />
+    <Content Include="dist\JSL.js" />
+    <Content Include="dist\JSL.min.js" />
     <Content Include="src\classes\DependenciesFactory.js" />
     <Content Include="src\classes\ModuleManager.js" />
     <Content Include="src\classes\ModuleRequestTracker.js" />
@@ -76,7 +76,7 @@
   <ItemGroup>
     <None Include=".travis.yml" />
     <None Include="bower.json" />
-    <None Include="dist\AMD.min.js.map" />
+    <None Include="dist\JSL.min.js.map" />
     <None Include="package.json" />
     <None Include="README.md" />
     <None Include="RunTestsOnBuild.target" />

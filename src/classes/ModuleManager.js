@@ -78,7 +78,7 @@
 
 			var elementsToDownload = getElementsToDownload(dependencies);
 			if (elementsToDownload.length > 0) {
-				scriptProvider.download(elementsToDownload).then(promise.resolve);
+				scriptProvider.download(elementsToDownload).then(function () { promise.resolve(); });
 			} else {
 				promise.resolve();
 			}

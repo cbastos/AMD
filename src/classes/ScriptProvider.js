@@ -76,7 +76,7 @@
 			var firstScriptIdentifier = scriptsNames[0];
 			getScript.call(self, firstScriptIdentifier).then(function () {
 				scriptsNames.shift();
-				downloadScriptsInOrder.call(self, id, scriptsNames).then(promise.resolve);
+				downloadScriptsInOrder.call(self, id, scriptsNames).then(function () { promise.resolve(); });
 			});
 		}
 		return promise;
