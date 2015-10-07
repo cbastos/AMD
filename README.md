@@ -6,21 +6,29 @@ A **script** is a ".js" file that exports an object related with a named variabl
 The script could have dependencies of other scripts to be executed. In this case, the script register info has the detail of dependencies.
 ##What's a module?
 A **module** is one type of entity that you can register and retrieve trough **JSL**. The module registration info has a function that retrieves the definition of the module.
-##Usage examples
-You can see full documentation on http://www.jsloader.com/ .
-#### Registering an retrieving scripts
-1. Register a new element in JSLoader:
+#Usage examples
+You can see full documentation (api and tutorials) on http://www.jsloader.com/ .
+##JSL.set ( { id, from, [dependencies] } )
+#### Registering a script
+
+* Register a new element in JSLoader:
 ```javascript
-	JSL.set({ id: "SomeIdentifierThatExportsTheFile", from : "/path/to/file.js" });
-```
-2. Retrieve the registered element:
-```javascript
-	JSL.get({ id: "SomeIdentifierThatExportsTheFile" }).then(function(exportedElement){
-		exportedElement.doSomething();
+	JSL.set({ 
+		id: "SomeIdentifierThatExportsTheFile", 
+		from : "/path/to/file.js" 
 	});
 ```
-#### Registering an retrieving modules
-1. Registering a module in JSLoader:
+#### Registering a script with dependencies
+
+* Register a new element in JSLoader:
+```javascript
+	JSL.set({ 
+		id: "AnotherIdentifierThatExportsAnotherFile", 
+		dependencies: "dependencyIdentifier", 
+		from : "/path/to/another/file.js" 
+	});
+```
+#### Registering a module
 
 ```javascript
 	JSL.set({ 
@@ -32,10 +40,53 @@ You can see full documentation on http://www.jsloader.com/ .
 		}
 	});
 ```
+#### Registering a module with dependencies
 
-2. Retrieve the registered module:
+```javascript
+	JSL.set({ 
+		id: "SomeModuleWithDepencies",
+		dependencies: { $ : "$" }, //-> jQuery dependency
+		from : function(dependencies){
+			return {
+				getInputValue: function(){ 
+					return dependencies.$("#someInput").val();
+				} 
+			};
+		}
+	});
+```
+##JSL.get ( { id } )
+
+#### Retrieving a script
+* Retrieve the registered element:
+```javascript
+	JSL.get({ id: "SomeIdentifierThatExportsTheFile" }).then(function(exportedElement){
+		exportedElement.doSomething();
+	});
+```
+
+#### Retrieving a module
+
+* Retrieve the registered module:
 ```javascript
 	JSL.get({ id: "SomeModule" }).then(function(SomeModule){
 		SomeModule.someMethod();
+	});
+```
+##JSL.config ( { [pathResolver] , [dependencies] } )
+#### Configuring JSL
+
+* You can configure the script path referente resolver.
+```javascript
+	JSL.config({ 
+		pathResolver: function(pathReference){
+			return pathReference.from;
+		}
+	});
+```
+* You can configure the default dependencies for every module.
+```javascript
+	JSL.config({ 
+		dependencies: { $ : $ }
 	});
 ```
