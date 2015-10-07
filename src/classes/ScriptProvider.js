@@ -1,26 +1,26 @@
-﻿var AMD = AMD || { classes: {} };
-(function (AMD) {
+﻿var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
 	 * @class The script manager is the responsible to retrieve scripts, downloading it if they weren't downloaded previously.
-	 * @constructor ScriptManager
+	 * @constructor ScriptProvider
 	 */
-	function ScriptManager() {
+	function ScriptProvider() {
 		this._scriptPaths = {};
 	}
 
-	ScriptManager.prototype._pathResolver = function (reference) {
+	ScriptProvider.prototype._pathResolver = function (reference) {
 		return reference.from;
 	};
 
 	/** 
 	 * Registers a new script definition in the script manager.
-	 * @memberOf ScriptManager
+	 * @memberOf ScriptProvider
 	 * @param {Object} pathReference The script path reference.
 	 * @throws The script reference hasn't an "id" or "from".
 	*/
-	ScriptManager.prototype.register = function (pathReference) {
+	ScriptProvider.prototype.register = function (pathReference) {
 		validate(pathReference);
 		this._scriptPaths[pathReference.id] = pathReference;
 	};
@@ -34,15 +34,15 @@
 
 	/** 
 	 * Downloads an array of scripts.
-	 * @memberOf ScriptManager
+	 * @memberOf ScriptProvider
 	 * @param {String[]} identifiers Identifiers of scripts you want to download.
 	 * @returns {Promise} The promise of be downloaded.
 	 * @throws The resolved url is not a string.
 	 * @throws The script has not been registered.
 	*/
-	ScriptManager.prototype.download = function (identifiers) {
+	ScriptProvider.prototype.download = function (identifiers) {
 		var self = this,
-			promise = new AMD.classes.Promise();
+			promise = new JSL.classes.Promise();
 
 		for (var i = 0, l = identifiers.length; i < l; ++i) {
 			getDownloadPromiseFor.call(this, identifiers[i]).then(checkAreDownladed);
@@ -69,7 +69,7 @@
 
 	function downloadScriptsInOrder(id, scriptsNames) {
 		var self = this,
-			promise = new AMD.classes.Promise();
+			promise = new JSL.classes.Promise();
 		if (scriptsNames.length === 0) {
 			promise.resolve(id);
 		} else {
@@ -84,7 +84,7 @@
 
 	function getScript(scriptIdentifier) {
 		var self = this,
-			promise = new AMD.classes.Promise(),
+			promise = new JSL.classes.Promise(),
 			existingScript = getFirstScriptInDom(scriptIdentifier);
 		if (existingScript === undefined) {
 			downloadScript({ id: scriptIdentifier, scriptPath: getPathFor.call(self, scriptIdentifier), }).then(function () {
@@ -111,7 +111,7 @@
 	}
 
 	function downloadScript(downloadScriptConfig) {
-		var promise = new AMD.classes.Promise(),
+		var promise = new JSL.classes.Promise(),
 			script = document.createElement('script');
 
 		script.setAttribute("data-identifier", downloadScriptConfig.id);
@@ -146,16 +146,16 @@
 
 	/**
 	 * Configures the path resolver that process the script path reference.
-	 * @memberOf ScriptManager
+	 * @memberOf ScriptProvider
 	 * @param {pathResolver} pathResolver - The new path resolver that will process the script path reference.
 	 */
-	ScriptManager.prototype.setPathResolver = function (pathResolver) {
+	ScriptProvider.prototype.setPathResolver = function (pathResolver) {
 		if (typeof (pathResolver) != "function") {
 			throw "The configured pathResolver is not a function";
 		}
 		this._pathResolver = pathResolver;
 	};
 
-	AMD.classes.ScriptManager = ScriptManager;
+	JSL.classes.ScriptProvider = ScriptProvider;
 
-}(AMD));
+}(JSL));

@@ -43,11 +43,11 @@
     <Content Include="src\classes\ModuleManager.js" />
     <Content Include="src\classes\ModuleRequestTracker.js" />
     <Content Include="src\classes\Promise.js" />
-    <Content Include="src\classes\ScriptManager.js" />
-    <Content Include="src\AMD.js" />
-    <Content Include="tests\AMD.Spec.js" />
-    <Content Include="tests\AMD.SpecRunner.html" />
-    <Content Include="tests\browser-integration\AMD.Integration.Spec.js" />
+    <Content Include="src\classes\ScriptProvider.js" />
+    <Content Include="src\JSL.js" />
+    <Content Include="tests\JSL.Spec.js" />
+    <Content Include="tests\JSL.SpecRunner.html" />
+    <Content Include="tests\browser-integration\JSL.Integration.Spec.js" />
     <Content Include="tests\browser-integration\server.js" />
     <Content Include="tests\unit-tests\DependenciesFactory.Spec.js" />
     <Content Include="tests\fixtures\AnExternalLibrary.js" />

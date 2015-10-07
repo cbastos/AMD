@@ -2,7 +2,7 @@
     var dependenciesFactory;
 
     beforeEach(function () {
-        dependenciesFactory = new AMD.classes.DependenciesFactory();
+        dependenciesFactory = new JSL.classes.DependenciesFactory();
     });
 
     it("can create a dependencies object trought a dependencies template with simple (string) dependencies", function () {

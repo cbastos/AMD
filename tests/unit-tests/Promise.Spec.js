@@ -3,7 +3,7 @@
         executed;
 
     beforeEach(function () {
-        promise = new AMD.classes.Promise();
+        promise = new JSL.classes.Promise();
         executed = false;
     });
 

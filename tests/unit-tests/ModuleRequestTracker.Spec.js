@@ -3,7 +3,7 @@
 		some_module_identifier = "Some.NameSpace.To.Module.Identifier";
 
 	beforeEach(function () {
-		startingModulesTracker = new AMD.classes.ModuleRequestTracker();
+		startingModulesTracker = new JSL.classes.ModuleRequestTracker();
 	});
 
 	it("on instantiation, initializes the dictionary of tracked modules", function () {

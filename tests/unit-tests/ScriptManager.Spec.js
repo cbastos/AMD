@@ -2,7 +2,7 @@
 	var scriptManager;
 
 	beforeEach(function () {
-		scriptManager = new AMD.classes.ScriptManager();
+		scriptManager = new JSL.classes.ScriptProvider();
 	});
 
 

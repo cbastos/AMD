@@ -1,7 +1,7 @@
 ﻿(function () {
     "use strict";
 
-    AMD.set({
+    JSL.set({
         id: "ModuleWithMultipleImplementations",
         from: function () {
             return ModuleWithMultipleImplementations;

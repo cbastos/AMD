@@ -1,16 +1,16 @@
-﻿describe("The AMD Framework", function () {
+﻿describe("The JSL Framework", function () {
     "use strict";
 
     var JQUERY_PATH = "../vendor/jquery/jquery-1.8.2.js";
 
-    describe("when inspecting AMD objects facades", function () {
+    describe("when inspecting JSL objects facades", function () {
 
-        describe("when inspecting AMD global variable", function () {
+        describe("when inspecting JSL global variable", function () {
 
-            it("shows AMD utilities", function () {
-                expect(typeof (AMD.set) === "function").toBeTruthy();
-                expect(typeof (AMD.config) === "function").toBeTruthy();
-                expect(typeof (AMD.get) === "function").toBeTruthy();
+            it("shows JSL utilities", function () {
+                expect(typeof (JSL.set) === "function").toBeTruthy();
+                expect(typeof (JSL.config) === "function").toBeTruthy();
+                expect(typeof (JSL.get) === "function").toBeTruthy();
             });
 
         });
@@ -19,10 +19,10 @@
 
             it("can set a default dependencies", function () {
                 var defaultDependencies = { handle: function () { } };
-                AMD.config({
+                JSL.config({
                 	dependencies: defaultDependencies
                 });
-                AMD.set({
+                JSL.set({
                     id: "ModuleForShowingSandBoxFacade",
                     from: function (dependencies) {
 
@@ -30,7 +30,7 @@
 
                     }
                 });
-                AMD.get({ id: "ModuleForShowingSandBoxFacade" });
+                JSL.get({ id: "ModuleForShowingSandBoxFacade" });
             });
 
         });
@@ -41,10 +41,10 @@
 
         it("may register a module only the first time", function () {
             var returnedValue = "doSomething_Module5_Executed";
-            AMD.set({ id: "Module5", from: function () { return returnedValue; } });
-            AMD.set({ id: "Module5", from: function () { return "WRONG_VALUE"; } });
+            JSL.set({ id: "Module5", from: function () { return returnedValue; } });
+            JSL.set({ id: "Module5", from: function () { return "WRONG_VALUE"; } });
 
-            AMD.get({ id: "Module5" }).then(function (returnedData) {
+            JSL.get({ id: "Module5" }).then(function (returnedData) {
 
                 expect(returnedData).toEqual(returnedValue);
 
@@ -53,7 +53,7 @@
 
         it("fails when module is registered without module", function () {
             expect(function () {
-                AMD.set({
+                JSL.set({
                     // --> Missing  "id".
                     from: function () { }
                 });
@@ -62,7 +62,7 @@
 
         it("fails when module is registered without from", function () {
             expect(function () {
-                AMD.set({
+                JSL.set({
                     id: "IrrelevantId",
                     // --> Missing "from".
                 });
@@ -70,14 +70,14 @@
         });
 
         it("fails if the module needs a library that isn't registered previously", function () {
-            AMD.set({
+            JSL.set({
                 id: "ModuleWithNotFoundLib",
                 dependencies: { some_dependency: "NonExistingLibId" },
                 from: function () { }
             });
 
             expect(function () {
-                AMD.get({ id: "ModuleWithNotFoundLib" });
+                JSL.get({ id: "ModuleWithNotFoundLib" });
             }).toThrow("The \"NonExistingLibId\" from hasn't been added.");
         });
 
@@ -86,9 +86,9 @@
     describe("when registering a module using his path", function () {
 
         it("may be retrieved and its functions may be accessed", function (done) {
-            AMD.set({ id: "SampleModule", from: "./Fixtures/SampleModule.js" });
+            JSL.set({ id: "SampleModule", from: "./Fixtures/SampleModule.js" });
 
-            AMD.get({ id: "SampleModule" }).then(function (SampleModule) {
+            JSL.get({ id: "SampleModule" }).then(function (SampleModule) {
 
                 var sampleModule = new SampleModule();
                 expect(typeof (sampleModule.someMethod) === "function").toBeTruthy();
@@ -100,7 +100,7 @@
         it("fails if doesn't have a correct identifier", function () {
             expect(function () {
                 var wrongTypeIdentifier = {};
-                AMD.set({ id: wrongTypeIdentifier, from: "Irrelevant" });
+                JSL.set({ id: wrongTypeIdentifier, from: "Irrelevant" });
             }).toThrow('The reference has wrong properties. Try to set an script \"id\" (string) and a "from". (Wrong reference: {"id":{},"from":"Irrelevant"}).');
         });
 
@@ -113,7 +113,7 @@
             window.compleja = { sub: "other value" };
             window.otra = { otro: { otronivel: "another one" } };
 
-            AMD.set({
+            JSL.set({
                 id: "One.Module.In.NameSpace1",
                 dependencies: { some: "some", compleja: { sub: "compleja.sub" }, otra: { otronivel: { subnivel: ["otra.otro.otronivel"] } } },
                 from: function (dependencies) {
@@ -125,19 +125,19 @@
                 }
             });
 
-            AMD.get({ id: "One.Module.In.NameSpace1" });
+            JSL.get({ id: "One.Module.In.NameSpace1" });
 
         });
 
         it("gets the dependencies object filled downloading dependencies from files", function (done) {
             var LIBRARY_PLUGIN_PATH = "./Fixtures/Library1.Plugin.js";
             var LIBRARY_PATH = "./Fixtures/Library1.js";
-            AMD.set({ id: "Library1", from: LIBRARY_PATH });
-            AMD.set({ id: "Library1.Plugin", from: LIBRARY_PLUGIN_PATH });
+            JSL.set({ id: "Library1", from: LIBRARY_PATH });
+            JSL.set({ id: "Library1.Plugin", from: LIBRARY_PLUGIN_PATH });
             var sampleModulePath = "./Fixtures/SampleModule.js";
-            AMD.set({ id: "SampleModule", from: sampleModulePath });
+            JSL.set({ id: "SampleModule", from: sampleModulePath });
 
-            AMD.set({
+            JSL.set({
                 id: "One.Module.In.NameSpace",
                 dependencies: { SampleModule: "SampleModule", another: { onelevel: { sublevel: ["Library1", "Library1.Plugin"] } } },
                 from: function (dependencies) {
@@ -149,7 +149,7 @@
                 }
             });
 
-            AMD.get({ id: "One.Module.In.NameSpace" });
+            JSL.get({ id: "One.Module.In.NameSpace" });
 
         });
 
@@ -158,8 +158,8 @@
     describe("when the module requires third party libraries", function () {
 
         it("makes the library available through the dependencies", function (done) {
-            AMD.set({ id: "$", from: JQUERY_PATH });
-            AMD.set({
+            JSL.set({ id: "$", from: JQUERY_PATH });
+            JSL.set({
                 id: "Module7",
                 dependencies: { libraries: { $: "$" } }, // --> require a not downloaded library makes the test async
                 from: function (dependencies) {
@@ -168,7 +168,7 @@
                 }
             });
 
-            AMD.get({ id: "Module7" });
+            JSL.get({ id: "Module7" });
         });
 
         it("doesn't download again the library if it has been loaded previously", function (done) {
@@ -176,8 +176,8 @@
             var script = document.createElement("script");
             script.src = JQUERY_PATH;
             script.addEventListener("load", function () {
-                AMD.set({ id: "$", from: JQUERY_PATH });
-                AMD.set({
+                JSL.set({ id: "$", from: JQUERY_PATH });
+                JSL.set({
                     id: "ModuleThatUseADownloadedLibrary",
                     dependencies: { libraries: { $: ["$"] } }, // --> jQuery required
                     from: function (dependencies) {
@@ -185,7 +185,7 @@
                     }
                 });
 
-                AMD.get({ id: "ModuleThatUseADownloadedLibrary" });
+                JSL.get({ id: "ModuleThatUseADownloadedLibrary" });
 
                 expect(document.querySelectorAll("script[src='" + JQUERY_PATH + "']").length).toBe(numberOfjQuerys + 1);
                 done();
@@ -197,8 +197,8 @@
         it("downloads the script if can't access to the library global symbol", function (done) {
             var LIB_PATH = "./Fixtures/LibraryForNotAccesibleLibraryTest.js";
             expect(document.querySelectorAll("script[src='" + LIB_PATH + "']").length).toBe(0);
-            AMD.set({ id: "lib", from: LIB_PATH });
-            AMD.set({
+            JSL.set({ id: "lib", from: LIB_PATH });
+            JSL.set({
                 id: "ModuleThatUseANotAccesibleLibrary",
                 dependencies: { libraries: { library: ["lib"] } }, // --> library required
                 from: function (dependencies) {
@@ -207,20 +207,20 @@
                     done();
                 }
             });
-            AMD.get({ id: "ModuleThatUseANotAccesibleLibrary" });
+            JSL.get({ id: "ModuleThatUseANotAccesibleLibrary" });
         });
 
         it("fails when you try to register a library from without identifier", function () {
             expect(function () {
                 var wrongTypeIdentifier = {};
-                AMD.set({ library: wrongTypeIdentifier, from: "Irrelevant" });
+                JSL.set({ library: wrongTypeIdentifier, from: "Irrelevant" });
             }).toThrow('The reference has wrong properties. Try to set an script \"id\" (string) and a "from". (Wrong reference: {"library":{},"from":"Irrelevant"}).');
         });
 
         it("may require a library with plugins available through the dependencies", function (done) {
-            AMD.set({ id: "$", from: JQUERY_PATH });
-            AMD.set({ id: "$.fn.sampleJQueryPlugin", from: "./Fixtures/sample.jquery.plugin.js" });
-            AMD.set({
+            JSL.set({ id: "$", from: JQUERY_PATH });
+            JSL.set({ id: "$.fn.sampleJQueryPlugin", from: "./Fixtures/sample.jquery.plugin.js" });
+            JSL.set({
                 id: "ModuleWithLibAndPlugin",
                 dependencies: { libraries: { $: ["$", "$.fn.sampleJQueryPlugin"] } },
                 from: function (dependencies) {
@@ -228,12 +228,12 @@
                     done();
                 }
             });
-            AMD.get({ id: "ModuleWithLibAndPlugin" });
+            JSL.get({ id: "ModuleWithLibAndPlugin" });
         });
 
         it("may download a library with dependencies", function (done) {
-            AMD.set({ id: "$", dependencies: "$.fn.sampleJQueryPlugin", from: JQUERY_PATH });
-            AMD.get({ id: "$" }).then(function ($) {
+            JSL.set({ id: "$", dependencies: "$.fn.sampleJQueryPlugin", from: JQUERY_PATH });
+            JSL.get({ id: "$" }).then(function ($) {
 
                 expect($.fn.sampleJQueryPlugin).not.toBe(undefined);
                 done();
@@ -245,8 +245,8 @@
             var LIBRARY_PLUGIN_PATH = "./Fixtures/Library1.Plugin.js";
             var LIBRARY_PATH = "./Fixtures/Library1.js";
             var numberOfPluginsInDOM = document.querySelectorAll("script[src='" + LIBRARY_PLUGIN_PATH + "']").length;
-            AMD.set({ id: "Library1", from: LIBRARY_PATH });
-            AMD.set({ id: "Library1.Plugin", from: LIBRARY_PLUGIN_PATH });
+            JSL.set({ id: "Library1", from: LIBRARY_PATH });
+            JSL.set({ id: "Library1.Plugin", from: LIBRARY_PLUGIN_PATH });
 
             var jqueryScript = document.createElement("script");
             jqueryScript.src = LIBRARY_PATH;
@@ -254,7 +254,7 @@
                 var pluginScript = document.createElement("script");
                 pluginScript.src = LIBRARY_PLUGIN_PATH;
                 pluginScript.addEventListener("load", function () {
-                    AMD.set({
+                    JSL.set({
                         id: "ModuleThatUseALibraryAndADownloadedPlugin",
                         dependencies: { libraries: { Library1: ["Library1", "Library1.Plugin"] } }, // --> Library1 and a Library1 PLUGIN
                         from: function (dependencies) {
@@ -264,7 +264,7 @@
                             done();
                         }
                     });
-                    AMD.get({ id: "ModuleThatUseALibraryAndADownloadedPlugin" });
+                    JSL.get({ id: "ModuleThatUseALibraryAndADownloadedPlugin" });
                 });
                 document.body.appendChild(pluginScript);
             });
@@ -279,12 +279,12 @@
         it("downloads the module scripts only once, regardless of how many times is the module started", function (done) {
             var sampleModulePath = "./Fixtures/SampleModule.js",
                 firstStartCallbackExecuted = false;
-            AMD.set({ id: "SampleModule", from: sampleModulePath });
+            JSL.set({ id: "SampleModule", from: sampleModulePath });
 
-            AMD.get({ id: "SampleModule" }).then(function () {
+            JSL.get({ id: "SampleModule" }).then(function () {
                 firstStartCallbackExecuted = true;
             });
-            AMD.get({ id: "SampleModule" }).then(function () {
+            JSL.get({ id: "SampleModule" }).then(function () {
                 var howManyScriptsAreInTheDocument = document.querySelectorAll("script[src='" + sampleModulePath + "']").length;
                 expect(firstStartCallbackExecuted).toBeTruthy();
                 expect(howManyScriptsAreInTheDocument).toBe(1);
@@ -294,13 +294,13 @@
 
         it("fails if the module or its from hasn't been registered", function () {
             expect(function () {
-                AMD.get({ id: "ModuleNotRegistered" });
+                JSL.get({ id: "ModuleNotRegistered" });
             }).toThrow("The \"ModuleNotRegistered\" from hasn't been added.");
         });
 
         it("executes get promise", function () {
             var called = false;
-            AMD.set({
+            JSL.set({
                 id: "OneModule",
                 from: function () {
                     function OneModule() {
@@ -310,7 +310,7 @@
                 }
             });
 
-            AMD.get({ id: "OneModule" }).then(function (OneModule) {
+            JSL.get({ id: "OneModule" }).then(function (OneModule) {
                 var instance = new OneModule();
                 expect(instance.ImOnModule).toBe("Yes");
                 called = true;
@@ -320,9 +320,9 @@
         });
 
         it("makes the dependencies avaiable trough dependencies object", function (done) {
-            AMD.set({ id: "$", from: JQUERY_PATH });
-            AMD.set({ id: "$.fn.sampleJQueryPlugin", from: "./Fixtures/sample.jquery.plugin.js" });
-            AMD.set({
+            JSL.set({ id: "$", from: JQUERY_PATH });
+            JSL.set({ id: "$.fn.sampleJQueryPlugin", from: "./Fixtures/sample.jquery.plugin.js" });
+            JSL.set({
                 id: "ModuleRequired",
                 from: function () {
                     function ModuleRequired() {
@@ -333,7 +333,7 @@
                     return ModuleRequired;
                 }
             });
-            AMD.set({
+            JSL.set({
                 id: "ModuleThatRequiresLibsAndModules",
                 dependencies: {
                     libraries: { $: ["$", "$.fn.sampleJQueryPlugin"] },
@@ -348,7 +348,7 @@
                 }
             });
 
-            AMD.get({ id: "ModuleThatRequiresLibsAndModules" });
+            JSL.get({ id: "ModuleThatRequiresLibsAndModules" });
 
         });
 
@@ -356,7 +356,7 @@
 
     describe("the dependency injection system", function () {
         beforeEach(function () {
-            AMD.set({
+            JSL.set({
                 id: "Module1",
                 from: function () {
                     var self = this;
@@ -366,7 +366,7 @@
                     return self;
                 }
             });
-            AMD.set({
+            JSL.set({
                 id: "Module2",
                 from: function () {
                     var self = this;
@@ -376,7 +376,7 @@
                     return self;
                 }
             });
-            AMD.set({
+            JSL.set({
                 id: "Module3",
                 collaborators: { dep1: "Module1", dep2: "Module2" },
                 from: function (dependencies) {
@@ -391,13 +391,13 @@
         });
 
         xit("fails when the injected dependency is not expected by the module with a descriptive error", function () {
-            AMD.set({
+            JSL.set({
                 id: "ModuleWithoutDependencies",
                 from: function () { }
             });
             var notExpectedDependencyDefinition = { someIrrelevantMethod: function () { } };
             expect(function () {
-                AMD.get({
+                JSL.get({
                     id: "ModuleWithoutDependencies",
                     collaborators: { notExpecTedDependency: notExpectedDependencyDefinition }
                 });
@@ -405,13 +405,13 @@
         });
 
         xit("can inject several collaborators to a module", function () {
-            AMD.get({ id: "Module3" }).then(function (Module3) {
+            JSL.get({ id: "Module3" }).then(function (Module3) {
                 var modulo3 = Module3.new();
                 expect(modulo3.doSomething3()).toEqual(3);
             });
-            AMD.stop({ id: "Module1" });
-            AMD.stop({ id: "Module2" });
-            AMD.stop({ id: "Module3" });
+            JSL.stop({ id: "Module1" });
+            JSL.stop({ id: "Module2" });
+            JSL.stop({ id: "Module3" });
         });
 
         xit("can inject collaborators to a module on the fly when you get it", function () {
@@ -422,7 +422,7 @@
                         return MOCKED_FUNCTION_RETURNED_DATA;
                     }
                 };
-            AMD.set({
+            JSL.set({
                 id: SAMPLE_MODULE_ID,
                 collaborators: { dep1: "Module1" },
                 from: function (dependencies) {
@@ -430,17 +430,17 @@
                     self.doSomething = dependencies.collaborators.dep1.mockedDep1Method;
                 }
             });
-            AMD.get({ id: SAMPLE_MODULE_ID, collaborators: { dep1: mockedDep1 } }).then(function (instance) {
+            JSL.get({ id: SAMPLE_MODULE_ID, collaborators: { dep1: mockedDep1 } }).then(function (instance) {
                 expect(instance.doSomething()).toBe(MOCKED_FUNCTION_RETURNED_DATA);
             });
-            AMD.stop({ id: SAMPLE_MODULE_ID });
+            JSL.stop({ id: SAMPLE_MODULE_ID });
         });
     });
 
     describe("when customizing", function () {
 
         afterEach(function () {
-            AMD.config({
+            JSL.config({
                 pathResolver: function (config) {
                     return config.from;
                 }
@@ -450,28 +450,28 @@
         it("fails if the configured pathResolver is not a  function", function () {
             expect(function () {
                 var nonFunctionTypePathResolver = {}; // --> not a function
-                AMD.config({
+                JSL.config({
                     pathResolver: nonFunctionTypePathResolver
                 });
             }).toThrow("The configured pathResolver is not a function");
         });
 
         it("fails if pathResolver doesn't return a string", function () {
-            AMD.config({
+            JSL.config({
                 pathResolver: function () {
                     return {}; //--> returns an Object
                 }
             });
-            AMD.set({ id: "ModuleForWrongPathResolverTest", from: "IRRELEVANT_PATH" });
+            JSL.set({ id: "ModuleForWrongPathResolverTest", from: "IRRELEVANT_PATH" });
             expect(function () {
-                AMD.get({ id: "ModuleForWrongPathResolverTest" });
+                JSL.get({ id: "ModuleForWrongPathResolverTest" });
             }).toThrow('The resolved url for "ModuleForWrongPathResolverTest"is not a string.');
         });
 
         it("may configure the function that must resolve the module references", function (done) {
             var pathResolverExecuted = false;
 
-            AMD.config({
+            JSL.config({
                 pathResolver: function (config) {
                     pathResolverExecuted = true;
                     expect(typeof (config.id)).toBe("string");
@@ -479,14 +479,14 @@
                 }
             });
 
-            AMD.set({
+            JSL.set({
                 id: "ModuleWithMultipleImplementations",
                 from: {
                     whiteImplementation: "./Fixtures/WhiteImplementation.js"
                 }
             });
 
-            AMD.get({ id: "ModuleWithMultipleImplementations" }).then(function (ModuleWithMultipleImplementations) {
+            JSL.get({ id: "ModuleWithMultipleImplementations" }).then(function (ModuleWithMultipleImplementations) {
                 var whiteInstance = new ModuleWithMultipleImplementations();
                 expect(whiteInstance.IamWhiteImplementation === true).toBeTruthy();
                 expect(pathResolverExecuted).toBeTruthy();

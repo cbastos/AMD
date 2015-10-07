@@ -4,7 +4,7 @@
 app.use(express.static('./tests/'));
 app.use(express.static('.'));
 app.get('/', function (req, res) {
-    res.sendfile('../AMD.SpecRunner.html');
+    res.sendfile('../JSL.SpecRunner.html');
 });
 
 var server = app.listen(process.env.PORT || 5000, function () {

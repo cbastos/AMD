@@ -1,17 +1,14 @@
-﻿var AMD = AMD || { classes: {} };
-(function (AMD) {
+﻿var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
 	 * @class The module manager.
 	 * @constructor ModuleManager
 	 */
-	function ModuleManager(scriptManager) {
+	function ModuleManager(scriptProvider, startingModulesTracker, dependenciesFactory) {
 		var self = this,
-            defaultDependencies = {},
-			//-> TODO: These dependencies should be injected by constructor.
-            startingModulesTracker = new AMD.classes.ModuleRequestTracker(),
-			dependenciesFactory = new AMD.classes.DependenciesFactory();
+            defaultDependencies = {};
 
 		/** 
 		 * Sets the default dependencies object.
@@ -62,7 +59,7 @@
 		 * @returns {Promise} Promise to be retrieved.
 		*/
 		self.get = function (module) {
-			var promise = new AMD.classes.Promise(),
+			var promise = new JSL.classes.Promise(),
                 moduleIdentifier = module.id;
 
 			startingModulesTracker.registerModuleRequest({ id: moduleIdentifier, moduleRequestPromise: promise });
@@ -77,11 +74,11 @@
 		};
 
 		function download(dependencies) {
-			var promise = new AMD.classes.Promise();
+			var promise = new JSL.classes.Promise();
 
 			var elementsToDownload = getElementsToDownload(dependencies);
 			if (elementsToDownload.length > 0) {
-				scriptManager.download(elementsToDownload).then(promise.resolve);
+				scriptProvider.download(elementsToDownload).then(promise.resolve);
 			} else {
 				promise.resolve();
 			}
@@ -126,12 +123,12 @@
 		}
 
 		function getModule(moduleIdentifier) {
-			var promise = new AMD.classes.Promise();
+			var promise = new JSL.classes.Promise();
 
 			if (isLoaded(moduleIdentifier)) {
 				promise.resolve(getVar(moduleIdentifier));
 			} else if (startingModulesTracker.getNumberOfRequestsFor(moduleIdentifier) <= 1) {
-				scriptManager.download([moduleIdentifier]).then(function () {
+				scriptProvider.download([moduleIdentifier]).then(function () {
 					promise.resolve(getVar(moduleIdentifier));
 				});
 			}
@@ -176,6 +173,6 @@
 		}
 	}
 
-	AMD.classes.ModuleManager = ModuleManager;
+	JSL.classes.ModuleManager = ModuleManager;
 
-}(AMD));
+}(JSL));

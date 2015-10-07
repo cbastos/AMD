@@ -1,7 +1,7 @@
 ﻿; (function () {
     "use strict";
 
-    AMD.set({
+    JSL.set({
         id: "SampleModule",
         from: function () {
             return SampleModule;

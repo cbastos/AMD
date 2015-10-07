@@ -1,15 +1,15 @@
 {
-  "name": "AMD",
+  "name": "JSL",
   "version": "0.0.1",
-  "homepage": "https://github.com/cbastos/AMD",
-  "description": "An AMD AMD for modular architectures",
-  "main": "AMD.min.js",
+  "homepage": "https://github.com/cbastos/JSL",
+  "description": "An JSL JSL for modular architectures",
+  "main": "JSL.min.js",
   "moduleType": [
     "amd",
     "node"
   ],
   "keywords": [
-    "AMD"
+    "JSL"
   ],
   "authors": [
     "Carlos Bastos Pérez-Cuadrado"

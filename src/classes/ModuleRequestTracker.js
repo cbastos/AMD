@@ -1,5 +1,5 @@
-﻿var AMD = AMD || { classes: {} };
-(function (AMD) {
+﻿var JSL = JSL || { classes: {} };
+(function (JSL) {
     "use strict";
     
 	/** 
@@ -59,6 +59,6 @@
     	this.startingModules[moduleIdentifier].splice(0, 1);
     };
 
-    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
+    JSL.classes.ModuleRequestTracker = ModuleRequestTracker;
 
-}(AMD));
+}(JSL));

@@ -1,5 +1,5 @@
-var AMD = AMD || { classes: {} };
-(function (AMD) {
+var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
@@ -56,23 +56,20 @@ var AMD = AMD || { classes: {} };
 		return nameSpacePath;
 	}
 
-	AMD.classes.DependenciesFactory = DependenciesFactory;
+	JSL.classes.DependenciesFactory = DependenciesFactory;
 
-}(AMD));
-var AMD = AMD || { classes: {} };
-(function (AMD) {
+}(JSL));
+var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
 	 * @class The module manager.
 	 * @constructor ModuleManager
 	 */
-	function ModuleManager(scriptManager) {
+	function ModuleManager(scriptProvider, startingModulesTracker, dependenciesFactory) {
 		var self = this,
-            defaultDependencies = {},
-			//-> TODO: These dependencies should be injected by constructor.
-            startingModulesTracker = new AMD.classes.ModuleRequestTracker(),
-			dependenciesFactory = new AMD.classes.DependenciesFactory();
+            defaultDependencies = {};
 
 		/** 
 		 * Sets the default dependencies object.
@@ -123,7 +120,7 @@ var AMD = AMD || { classes: {} };
 		 * @returns {Promise} Promise to be retrieved.
 		*/
 		self.get = function (module) {
-			var promise = new AMD.classes.Promise(),
+			var promise = new JSL.classes.Promise(),
                 moduleIdentifier = module.id;
 
 			startingModulesTracker.registerModuleRequest({ id: moduleIdentifier, moduleRequestPromise: promise });
@@ -138,11 +135,11 @@ var AMD = AMD || { classes: {} };
 		};
 
 		function download(dependencies) {
-			var promise = new AMD.classes.Promise();
+			var promise = new JSL.classes.Promise();
 
 			var elementsToDownload = getElementsToDownload(dependencies);
 			if (elementsToDownload.length > 0) {
-				scriptManager.download(elementsToDownload).then(promise.resolve);
+				scriptProvider.download(elementsToDownload).then(promise.resolve);
 			} else {
 				promise.resolve();
 			}
@@ -187,12 +184,12 @@ var AMD = AMD || { classes: {} };
 		}
 
 		function getModule(moduleIdentifier) {
-			var promise = new AMD.classes.Promise();
+			var promise = new JSL.classes.Promise();
 
 			if (isLoaded(moduleIdentifier)) {
 				promise.resolve(getVar(moduleIdentifier));
 			} else if (startingModulesTracker.getNumberOfRequestsFor(moduleIdentifier) <= 1) {
-				scriptManager.download([moduleIdentifier]).then(function () {
+				scriptProvider.download([moduleIdentifier]).then(function () {
 					promise.resolve(getVar(moduleIdentifier));
 				});
 			}
@@ -237,11 +234,11 @@ var AMD = AMD || { classes: {} };
 		}
 	}
 
-	AMD.classes.ModuleManager = ModuleManager;
+	JSL.classes.ModuleManager = ModuleManager;
 
-}(AMD));
-var AMD = AMD || { classes: {} };
-(function (AMD) {
+}(JSL));
+var JSL = JSL || { classes: {} };
+(function (JSL) {
     "use strict";
     
 	/** 
@@ -301,11 +298,11 @@ var AMD = AMD || { classes: {} };
     	this.startingModules[moduleIdentifier].splice(0, 1);
     };
 
-    AMD.classes.ModuleRequestTracker = ModuleRequestTracker;
+    JSL.classes.ModuleRequestTracker = ModuleRequestTracker;
 
-}(AMD));
-var AMD = AMD || { classes: {} };
-(function (AMD) {
+}(JSL));
+var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
@@ -344,32 +341,32 @@ var AMD = AMD || { classes: {} };
 		};
 	}
 
-	AMD.classes.Promise = Promise;
+	JSL.classes.Promise = Promise;
 
-}(AMD));
-var AMD = AMD || { classes: {} };
-(function (AMD) {
+}(JSL));
+var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
 	 * @class The script manager is the responsible to retrieve scripts, downloading it if they weren't downloaded previously.
-	 * @constructor ScriptManager
+	 * @constructor ScriptProvider
 	 */
-	function ScriptManager() {
+	function ScriptProvider() {
 		this._scriptPaths = {};
 	}
 
-	ScriptManager.prototype._pathResolver = function (reference) {
+	ScriptProvider.prototype._pathResolver = function (reference) {
 		return reference.from;
 	};
 
 	/** 
 	 * Registers a new script definition in the script manager.
-	 * @memberOf ScriptManager
+	 * @memberOf ScriptProvider
 	 * @param {Object} pathReference The script path reference.
 	 * @throws The script reference hasn't an "id" or "from".
 	*/
-	ScriptManager.prototype.register = function (pathReference) {
+	ScriptProvider.prototype.register = function (pathReference) {
 		validate(pathReference);
 		this._scriptPaths[pathReference.id] = pathReference;
 	};
@@ -383,15 +380,15 @@ var AMD = AMD || { classes: {} };
 
 	/** 
 	 * Downloads an array of scripts.
-	 * @memberOf ScriptManager
+	 * @memberOf ScriptProvider
 	 * @param {String[]} identifiers Identifiers of scripts you want to download.
 	 * @returns {Promise} The promise of be downloaded.
 	 * @throws The resolved url is not a string.
 	 * @throws The script has not been registered.
 	*/
-	ScriptManager.prototype.download = function (identifiers) {
+	ScriptProvider.prototype.download = function (identifiers) {
 		var self = this,
-			promise = new AMD.classes.Promise();
+			promise = new JSL.classes.Promise();
 
 		for (var i = 0, l = identifiers.length; i < l; ++i) {
 			getDownloadPromiseFor.call(this, identifiers[i]).then(checkAreDownladed);
@@ -418,7 +415,7 @@ var AMD = AMD || { classes: {} };
 
 	function downloadScriptsInOrder(id, scriptsNames) {
 		var self = this,
-			promise = new AMD.classes.Promise();
+			promise = new JSL.classes.Promise();
 		if (scriptsNames.length === 0) {
 			promise.resolve(id);
 		} else {
@@ -433,7 +430,7 @@ var AMD = AMD || { classes: {} };
 
 	function getScript(scriptIdentifier) {
 		var self = this,
-			promise = new AMD.classes.Promise(),
+			promise = new JSL.classes.Promise(),
 			existingScript = getFirstScriptInDom(scriptIdentifier);
 		if (existingScript === undefined) {
 			downloadScript({ id: scriptIdentifier, scriptPath: getPathFor.call(self, scriptIdentifier), }).then(function () {
@@ -460,7 +457,7 @@ var AMD = AMD || { classes: {} };
 	}
 
 	function downloadScript(downloadScriptConfig) {
-		var promise = new AMD.classes.Promise(),
+		var promise = new JSL.classes.Promise(),
 			script = document.createElement('script');
 
 		script.setAttribute("data-identifier", downloadScriptConfig.id);
@@ -495,61 +492,63 @@ var AMD = AMD || { classes: {} };
 
 	/**
 	 * Configures the path resolver that process the script path reference.
-	 * @memberOf ScriptManager
+	 * @memberOf ScriptProvider
 	 * @param {pathResolver} pathResolver - The new path resolver that will process the script path reference.
 	 */
-	ScriptManager.prototype.setPathResolver = function (pathResolver) {
+	ScriptProvider.prototype.setPathResolver = function (pathResolver) {
 		if (typeof (pathResolver) != "function") {
 			throw "The configured pathResolver is not a function";
 		}
 		this._pathResolver = pathResolver;
 	};
 
-	AMD.classes.ScriptManager = ScriptManager;
+	JSL.classes.ScriptProvider = ScriptProvider;
 
-}(AMD));
+}(JSL));
 /** 
- * The AMD (asynchronous module definition) manager.
- * @namespace AMD
+ * The JSL (asynchronous module definition) manager.
+ * @namespace JSL
 */
-var AMD = AMD || { classes: {} };
-(function (AMD) {
+var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
-	var scriptManager = new AMD.classes.ScriptManager(),
-		moduleManager = new AMD.classes.ModuleManager(scriptManager);
+	var scriptProvider = new JSL.classes.ScriptProvider(),
+		startingModulesTracker = new JSL.classes.ModuleRequestTracker(),
+		dependenciesFactory = new JSL.classes.DependenciesFactory(),
+		moduleManager = new JSL.classes.ModuleManager(scriptProvider, startingModulesTracker, dependenciesFactory);
 
 	/** 
-	 * Registers a new element (module or script) in the AMD System.
-	 * @memberOf AMD
-	 * @param {Object} element The element (module or script) you want to register in the AMD System.
+	 * Registers a new element (module or script) in the JSL System.
+	 * @memberOf JSL
+	 * @param {Object} element The element (module or script) you want to register in the JSL System.
 	*/
-	AMD.set = function (element) {
+	JSL.set = function (element) {
 		if (typeof (element.from) === "function") {
 			moduleManager.register(element);
 		} else {
-			scriptManager.register(element);
+			scriptProvider.register(element);
 		}
 	};
 
 	//TODO: This method should retrieve modules and scripts, not only modules.
 	/** 
-	 * Retrieves an element (module or script) previously registered in the AMD System.
-	 * @memberOf AMD
+	 * Retrieves an element (module or script) previously registered in the JSL System.
+	 * @memberOf JSL
 	 * @param {Object} element Retrieves an element (module or script) with his dependencies.
 	*/
-	AMD.get = function () {
+	JSL.get = function () {
 		return moduleManager.get.apply(this, arguments);
 	};
 
 	/** 
-	 * Change configuration of the AMD manager. You can configure a new path resolver or the default dependencies for all elements.
-	 * @memberOf AMD
+	 * Change configuration of the JSL manager. You can configure a new path resolver or the default dependencies for all elements.
+	 * @memberOf JSL
 	 * @param {Object} configDetails The configuration details.
 	*/
-	AMD.config = function (configDetails) {
+	JSL.config = function (configDetails) {
 		if (typeof configDetails !== "undefined") {
 			if (typeof configDetails.pathResolver !== "undefined") {
-				scriptManager.setPathResolver(configDetails.pathResolver);
+				scriptProvider.setPathResolver(configDetails.pathResolver);
 			}
 			if (typeof configDetails.dependencies !== "undefined") {
 				moduleManager.setDefaultDependencies(configDetails.dependencies);
@@ -557,4 +556,4 @@ var AMD = AMD || { classes: {} };
 		}
 	};
 
-}(AMD));
+}(JSL));

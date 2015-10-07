@@ -1,6 +1,6 @@
 ﻿var webdriver = require('selenium-webdriver');
 
-describe("The AMD manager", function () {
+describe("The JSL manager", function () {
 
 	var browsers = ["chrome", "firefox"];
 
@@ -13,7 +13,7 @@ describe("The AMD manager", function () {
 	function expect_integration_tests_works_in(browserName) {
 		it("works in " + browserName, function (done) {
 			var browser = new webdriver.Builder().forBrowser(browserName).build();
-			browser.get('http://localhost:4505/AMD.SpecRunner.html');
+			browser.get('http://localhost:4505/JSL.SpecRunner.html');
 			browser.wait(function () {
 				return browser.isElementPresent(webdriver.By.className('duration'));
 			}).then(function () {

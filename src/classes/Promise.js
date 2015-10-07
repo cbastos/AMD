@@ -1,5 +1,5 @@
-﻿var AMD = AMD || { classes: {} };
-(function (AMD) {
+﻿var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
@@ -38,6 +38,6 @@
 		};
 	}
 
-	AMD.classes.Promise = Promise;
+	JSL.classes.Promise = Promise;
 
-}(AMD));
+}(JSL));

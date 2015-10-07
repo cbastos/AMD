@@ -8,7 +8,7 @@
 
 	config.jasmine = {
 		pivotal: {
-			src: 'dist/AMD.js',
+			src: 'dist/JSL.js',
 			options: {
 				specs: 'tests/unit-tests/*.Spec.js',
 			}
@@ -16,7 +16,7 @@
 	};
 
 	config.jasmine_nodejs = {
-		AMD: {
+		JSL: {
 			specs: [
                 "tests/browser-integration/**",
 			]
@@ -30,10 +30,10 @@
                 './src/classes/ModuleManager.js',
                 './src/classes/ModuleRequestTracker.js',
                 './src/classes/Promise.js',
-                './src/classes/ScriptManager.js',
-                './src/AMD.js'
+                './src/classes/ScriptProvider.js',
+                './src/JSL.js'
 			],
-			dest: './dist/AMD.js',
+			dest: './dist/JSL.js',
 		},
 	};
 
@@ -43,8 +43,8 @@
 			banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
 		},
 		build: {
-			src: './dist/AMD.js',
-			dest: './dist/AMD.min.js'
+			src: './dist/JSL.js',
+			dest: './dist/JSL.min.js'
 		}
 	};
 

@@ -1,5 +1,5 @@
-﻿var AMD = AMD || { classes: {} };
-(function (AMD) {
+﻿var JSL = JSL || { classes: {} };
+(function (JSL) {
 	"use strict";
 
 	/** 
@@ -56,6 +56,6 @@
 		return nameSpacePath;
 	}
 
-	AMD.classes.DependenciesFactory = DependenciesFactory;
+	JSL.classes.DependenciesFactory = DependenciesFactory;
 
-}(AMD));
+}(JSL));
