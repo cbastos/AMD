@@ -7,8 +7,8 @@
     <ProjectGuid>{96766FA0-5622-4BDE-848E-381961604933}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AMD</RootNamespace>
-    <AssemblyName>AMD</AssemblyName>
+    <RootNamespace>JSL</RootNamespace>
+    <AssemblyName>JSL</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>

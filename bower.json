@@ -1,8 +1,8 @@
 {
   "name": "JSL",
-  "version": "0.0.1",
-  "homepage": "https://github.com/cbastos/JSL",
-  "description": "An JSL JSL for modular architectures",
+  "version": "0.1",
+  "homepage": "https://github.com/cbastos/AMD",
+  "description": "JSL is back-end (NodeJS compatible) and front-end (all browsers) script file and module loader.",
   "main": "JSL.min.js",
   "moduleType": [
     "amd",
@@ -19,7 +19,9 @@
     "**/.*",
     "node_modules",
     "bower_components",
-    "test",
-    "tests"
+	"src",
+	"vendor",
+	"tests",
+	"*.*"
   ]
 }
