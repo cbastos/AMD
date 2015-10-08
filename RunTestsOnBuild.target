@@ -1,5 +1,0 @@
-﻿<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="RunJSUnitTests">
-    <Exec Command="&quot;$(SolutionDir)packages\Chutzpah.3.2.3\chutzpah.console.exe&quot; &quot;$(ProjectDir)domain\specs\JSL.SpecRunner.html&quot; /vsoutput" />
-  </Target>
-</Project>
